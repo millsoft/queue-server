@@ -1,0 +1,13 @@
+{
+    "name": "millsoft/queueserver",
+    "description": "A queue server for php long taking tasks",
+    "authors": [
+        {
+            "name": "Michael Milawski",
+            "email": "michael.milawski@planet-itservices.com"
+        }
+    ],
+    "require": {
+        "catfan/medoo": "^1.5"
+    }
+}
