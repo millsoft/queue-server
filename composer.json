@@ -8,6 +8,11 @@
         }
     ],
     "require": {
-        "catfan/medoo": "^1.5"
+        "catfan/medoo": "^1.5",
+        "react/http": "^0.6.0"
+    },
+    "autoload": {
+        "files": ["src/helper.php" ],
+        "psr-4": {"Millsoft\\Queuer\\": "src/app"}
     }
 }
