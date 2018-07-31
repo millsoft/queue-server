@@ -2,33 +2,66 @@
 namespace Millsoft\Queuer;
 
 class Jobs extends Queuer {
+
+	private $currentJobsWaiting = null;
+	private $currentJobsWorking = null;
+	private $currentJobsAll = null;
+
 	public function __construct() {
 		parent::__construct();
 		//die("Jobs OK");
 	}
 
-	//Get the count with new jobs (status = 0)
-	public function getCountNewJobs() {
-		//$sql = "SELECT count(*) as count_jobs FROM queue WHERE status=0";
-		//		$sql = "SELECT * FROM events LIMIT 5";
+	//Get the count with new jobs, working jobs etc..
+	public function getJobsCount() {
 
-		//$data = $this->db->query($sql)->fetchAll();
+		$jobs_waiting = $this->db->count("queue", [ "worker_status" => 0 ]);
+		$jobs_working = $this->db->count("queue", [ "worker_status" => 1 ]);
 
-		$re = $this->db->count("queue", [
-			"status" => 0,
-		]);
+		$re = [
+			"waiting" => $jobs_waiting,
+			"working" => $jobs_working
+		];
 
-		return (int) $re;
-
+		return $re;
 	}
 
 	public function addJob($job) {
 		\writelog("Adding job to queue");
 
+		$jobHash = md5($job['command']);
+
 		$this->db->insert("queue", [
-			"status" => 0,
-			"command" => "test",
+			"worker" => 0,
+			"worker_status" => 0,
+			"command" => "",
+			"job_hash" => $jobHash,
+			"output" => "",
+			"return_code" => null,
+			"priority" => 10,
 		]);
+	}
+
+	//Check if there are new jobs, also starts jobs
+	public function checkJobs(){
+		$jobs_count = $this->getJobsCount();
+
+		if ($jobs_count['waiting'] != $this->currentJobsWaiting && $jobs_count['waiting'] > 0) {
+			$this->currentJobsWaiting = $jobs_count['waiting'];
+			\writelog("Waiting jobs in queue: " . $jobs_count['waiting']);
+		}
+
+		if ($jobs_count['working'] != $this->currentJobsWorking && $jobs_count['working'] > 0) {
+			$this->currentJobsWorking = $jobs_count['working'];
+			\writelog("Working on " . $jobs_count['working'] . " jobs...");
+		}
+
+		$allJobsCount = (int) ($jobs_count['waiting'] + $jobs_count['working']);
+
+		if($allJobsCount == 0 && $allJobsCount !== $this->currentJobsAll){
+			$this->currentJobsAll = $allJobsCount;
+			\writelog("Nothing to do. Waiting for jobs.");
+		}
 
 	}
 }
