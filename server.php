@@ -21,11 +21,6 @@ $loop = \React\EventLoop\Factory::create();
 
 //Check the database for new jobs every x seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {
-	//$memory = memory_get_usage() / 1024;
-	//$formatted = number_format($memory, 3) . 'K';
-	//$jobs_count = $jobs->getCountNewJobs();
-	//echo "Current memory usage: {$formatted}\n";
-	//echo "Jobs in queue: n";
 	$jobs->checkJobs();
 
 });
@@ -33,7 +28,6 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 echo "******************************************\n";
 echo "* Queuer Server V1.0 by Michael Milawski *\n";
 echo "******************************************\n";
-
 
 //Add a mock job for dev purposes:
 $jobs->addJob([
@@ -44,10 +38,12 @@ $jobs->addJob([
 	"callback_done" => [
 		"url" => "https://www.example.com/jobdone",
 		"params" =>
+		[
 			"jobname" => "send_newsletters",
 			"id" => 12345,
 			"id_persons" => 56789,
-	]
+		],
+	],
 
 ]);
 
