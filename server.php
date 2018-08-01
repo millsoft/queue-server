@@ -29,9 +29,20 @@ echo "******************************************\n";
 echo "* Queuer Server V1.0 by Michael Milawski *\n";
 echo "******************************************\n";
 
+//At first delete all jobs
+$jobs->deleteAllJobs();
+
 //Add a mock job for dev purposes:
 $jobs->addJob([
-	"command" => "ls",
+	"command" => [
+		"type" => "http",
+		"url" => "http://www.cool.de",
+		"method" => "post",
+		"params" => [
+			"name" => "Michel",
+			"test" => "12345",
+		]
+	],
 
 	//Callback after the job was completed (POST Request)
 	//This can tell the application that something was done.

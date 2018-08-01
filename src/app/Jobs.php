@@ -29,7 +29,7 @@ class Jobs extends Queuer {
 	public function addJob($job) {
 		\writelog("Adding job to queue");
 
-		$jobHash = md5($job['command']);
+		$jobHash = md5(json_encode($job['command']) );
 
 		$this->db->insert("queue", [
 			"worker" => 0,
@@ -39,6 +39,7 @@ class Jobs extends Queuer {
 			"output" => "",
 			"return_code" => null,
 			"priority" => 10,
+			"job" => json_encode($job),
 		]);
 	}
 
@@ -90,45 +91,39 @@ class Jobs extends Queuer {
 		if ($jobs_count['waiting'] > 0 && $jobs_count['working'] < $this->config->workers_count) {
 			//Dispatch new job to worker
 			\writelog("Dispatching job to worker...");
+
+			//Get next job from the queue
 			$job = $this->getJobFromQueue();
 			//$worker = new Worker($job);
-			$this->work();
+			$this->dispatchJob($job);
 			\writelog("job dispatched");
 
 		}
 
 	}
 
-	public function dowork() {
-		\writelog("dowork wait...");
-		sleep(5);
-		\writelog("dowork cool");
+	//Dispatch a job to a worker abd execute the worker in the background
+	public function dispatchJob($job) {
+		$last_worker_id = 0;
+		//$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
+		$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'] . ' --';
+		
+		if($this->config->async){
+			//Execute the script asynchronously without blocking the current process
+			$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' & printf "%u" $!';
+		}else{
+			//Execute the script synchronously.
+			$cmd = $job_worker_cmd;
+		}
 
+		$cmd_output = shell_exec($cmd);
+		\writelog($cmd_output);
 	}
 
-	public function work() {
-		$wrk = $this->dowork();
-		\writelog("working");
-		$resolver = function ($wrk, callable $reject, callable $notify) {
-			// Do some work, possibly asynchronously, and then
-			// resolve or reject. You can notify of progress events (deprecated)
-			// along the way if you want/need.
-			\writelog("promissing");
-			//$resolve($awesomeResult);
-			die("FUCK");
-			// or throw new Exception('Promise rejected');
-			// or $resolve($anotherPromise);
-			// or $reject($nastyError);
-			// or $notify($progressNotification);
-		};
-
-		$canceller = function () {
-			// Cancel/abort any running operations like network connections, streams etc.
-
-			// Reject promise by throwing an exception
-			throw new Exception('Promise cancelled');
-		};
-
-		$promise = new \React\Promise\Promise($resolver, $canceller);
+	//Delete all jobs in database
+	public function deleteAllJobs(){
+		$sql = "TRUNCATE TABLE queue";
+		$this->db->query($sql);
+		\writelog("all jobs in the queue has been removed");
 	}
 }

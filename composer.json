@@ -9,7 +9,8 @@
     ],
     "require": {
         "catfan/medoo": "^1.5",
-        "react/http": "^0.6.0"
+        "react/http": "^0.6.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "autoload": {
         "files": ["src/helper.php" ],

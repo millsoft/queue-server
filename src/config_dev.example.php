@@ -15,4 +15,10 @@ class Config extends GlobalConfig {
 	//This depends on the server power
 	public $workers_count = 1;
 
+	public $workers_count = 1;
+
+	public $phpCommand = 'php';
+
+	public $workerScript = __DIR__ . '/work.php';
+	
 }
