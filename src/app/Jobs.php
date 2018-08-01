@@ -29,7 +29,7 @@ class Jobs extends Queuer {
 	public function addJob($job) {
 		\writelog("Adding job to queue");
 
-		$jobHash = md5(json_encode($job['command']) );
+		$jobHash = md5(json_encode($job['command']));
 
 		$this->db->insert("queue", [
 			"worker" => 0,
@@ -55,12 +55,12 @@ class Jobs extends Queuer {
 
 		//Set the id to 1 (assigned)
 
-		/*
-			$this->db->update("queue", [
-				"worker_status" => 1,
-				//TODO: update other stuff, like worker_id
-			]);
-		*/
+		$this->db->update("queue", [
+			"worker_status" => 1,
+			//TODO: update other stuff, like worker_id
+		], [
+			"id" => $job['id'],
+		]);
 
 		return $job;
 
@@ -107,11 +107,11 @@ class Jobs extends Queuer {
 		$last_worker_id = 0;
 		//$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
 		$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'] . ' --';
-		
-		if($this->config->async){
+
+		if ($this->config->async) {
 			//Execute the script asynchronously without blocking the current process
 			$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' & printf "%u" $!';
-		}else{
+		} else {
 			//Execute the script synchronously.
 			$cmd = $job_worker_cmd;
 		}
@@ -121,7 +121,7 @@ class Jobs extends Queuer {
 	}
 
 	//Delete all jobs in database
-	public function deleteAllJobs(){
+	public function deleteAllJobs() {
 		$sql = "TRUNCATE TABLE queue";
 		$this->db->query($sql);
 		\writelog("all jobs in the queue has been removed");

@@ -12,9 +12,12 @@ class GlobalConfig {
 	//async = true works currently only on linux, so set it to false when you work on windows.
 	public $async = true;
 
+	//the "php" command with which the workers should be executed
 	public $phpCommand = 'php';
 
-	public $workerScript = __DIR__ . '/../work.php';
+	//Default timeout for HTTP requests - can be overriden for each job
+	public $httpTimeout = 10;
 
+	public $workerScript = __DIR__ . '/../work.php';
 
 }

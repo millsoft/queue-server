@@ -26,7 +26,7 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 });
 
 echo "******************************************\n";
-echo "* Queuer Server V1.0 by Michael Milawski *\n";
+echo "* Queuer Server V1.0 by MilMike          *\n";
 echo "******************************************\n";
 
 //At first delete all jobs
@@ -36,23 +36,25 @@ $jobs->deleteAllJobs();
 $jobs->addJob([
 	"command" => [
 		"type" => "http",
-		"url" => "http://www.cool.de",
-		"method" => "post",
+		"url" => "http://httpbin.org/put?job=longjob",
+		"method" => "PUT",
+		"timeout" => 5,
 		"params" => [
 			"name" => "Michel",
 			"test" => "12345",
-		]
+		],
+
 	],
 
 	//Callback after the job was completed (POST Request)
 	//This can tell the application that something was done.
 	"callback_done" => [
-		"url" => "https://www.example.com/jobdone",
-		"params" =>
-		[
-			"jobname" => "send_newsletters",
-			"id" => 12345,
-			"id_persons" => 56789,
+		"type" => "http",
+		"url" => "http://httpbin.org/get?job=done",
+		"method" => "GET",
+		"params" => [
+			"name" => "Michel",
+			"test" => "12345",
 		],
 	],
 
