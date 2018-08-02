@@ -26,10 +26,10 @@ class Queuer {
 			$this->db = new Medoo([
 				// required
 				'database_type' => 'mysql',
-				'database_name' => $this->config->db["database"],
+				'database_name' => $this->config->db["dbname"],
 				'server' => $this->config->db["host"],
-				'username' => $this->config->db["username"],
-				'password' => $this->config->db["password"],
+				'username' => $this->config->db["user"],
+				'password' => $this->config->db["pass"],
 
 				// [optional]
 				'charset' => 'utf8',
@@ -61,7 +61,7 @@ class Queuer {
 			die("Error Connecting to database!\n" . $e->getMessage());
 		}
 
-		\writelog("Connected to the database: " . $this->config->db["database"]);
+		\writelog("Connected to the database: " . $this->config->db["dbname"]);
 		return $this->db;
 
 	}
@@ -82,6 +82,11 @@ class Queuer {
 			//Load only global config
 			$this->config = new GlobalConfig();
 		}
+	}
+
+	//Get the loaded configuration data
+	public function getConfig(){
+		return $this->config;
 	}
 
 }

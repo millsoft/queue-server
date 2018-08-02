@@ -20,4 +20,8 @@ class GlobalConfig {
 
 	public $workerScript = __DIR__ . '/../work.php';
 
+	public $displayErrorDetails = true;
+
+	public $addContentLengthHeader = false;
+
 }
