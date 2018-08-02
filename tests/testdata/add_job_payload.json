@@ -1,0 +1,21 @@
+{
+  "command": {
+    "type": "http",
+    "url": "http://httpbin.org/put?job=longjob3",
+    "method": "PUT",
+    "timeout": 5,
+    "params": {
+      "name": "Michel",
+      "test": "12345"
+    }
+  },
+  "callback_done": {
+    "type": "http",
+    "url": "http://httpbin.org/get?job=done",
+    "method": "GET",
+    "params": {
+      "name": "Michel",
+      "test": "12345"
+    }
+  }
+}

@@ -2,7 +2,12 @@
 namespace Millsoft\Queuer;
 
 class GlobalConfig {
-	public $db = [];
+	public $db = [
+		"host" => "",
+		"dbname" => "",
+		"user" => "",
+		"pass" => "",
+	];
 
 	//how many workers can work simultanously?
 	//This depends on the server power

@@ -26,12 +26,15 @@ class Jobs extends Queuer {
 		return $re;
 	}
 
+	//Add a job to the queue
 	public function addJob($job) {
+
 		\writelog("Adding job to queue");
 
-		$jobHash = md5(json_encode($job['command']));
+		//$jobHash = md5(json_encode($job['command']));
+		$jobHash = md5( time() . rand(1,10000) );
 
-		$this->db->insert("queue", [
+		$added = $this->db->insert("queue", [
 			"worker" => 0,
 			"worker_status" => 0,
 			"command" => "",
@@ -41,6 +44,8 @@ class Jobs extends Queuer {
 			"priority" => 10,
 			"job" => json_encode($job),
 		]);
+
+		return $added->id;
 	}
 
 	//Get a job wairing in queue

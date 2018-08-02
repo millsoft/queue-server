@@ -32,6 +32,7 @@ echo "******************************************\n";
 //At first delete all jobs
 $jobs->deleteAllJobs();
 
+/*
 //Add a mock job for dev purposes:
 $jobs->addJob([
 	"command" => [
@@ -59,6 +60,9 @@ $jobs->addJob([
 	],
 
 ]);
+*/
+
+
 
 //$socket->listen(1337);
 $loop->run();
