@@ -7,6 +7,9 @@ class Jobs extends Queuer {
 	private $currentJobsWorking = null;
 	private $currentJobsAll = null;
 
+    //max threads
+	public $maxThreads = 5;
+
 	public function __construct() {
 		parent::__construct();
 		//die("Jobs OK");
@@ -21,6 +24,8 @@ class Jobs extends Queuer {
 		$re = [
 			"waiting" => $jobs_waiting,
 			"working" => $jobs_working,
+			"max_threads" => $this->maxThreads,
+			"free_threads" => $this->maxThreads - $jobs_working,
 		];
 
 		return $re;
@@ -92,6 +97,12 @@ class Jobs extends Queuer {
 			\writelog("Nothing to do. Waiting for jobs.");
 		}
 
+
+
+		while($jobs_count['waiting']){
+
+
+
 		//Dispatch jobs
 		if ($jobs_count['waiting'] > 0 && $jobs_count['working'] < $this->config->workers_count) {
 			//Dispatch new job to worker
@@ -105,22 +116,33 @@ class Jobs extends Queuer {
 
 		}
 
+            $jobs_count = $this->getJobsCount();
+        }
+
 	}
 
 	//Dispatch a job to a worker abd execute the worker in the background
 	public function dispatchJob($job) {
 		$last_worker_id = 0;
 		//$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
-		$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'] . ' --';
+		$logfile = __DIR__ . "/../../logs/job_" . $job['id'] . ".log";
+
+        $job_worker_cmd = $this->config->phpCommand
+            . ' ' . $this->config->workerScript
+            //. ' -- -j' . $job['id']
+            . ' -j' . $job['id']
+            . ' > ' . $logfile;
 
 		if ($this->config->async) {
 			//Execute the script asynchronously without blocking the current process
-			$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' & printf "%u" $!';
+			//$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' & printf "%u" $!';
+			$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' >/dev/null 2>&1 &';
 		} else {
 			//Execute the script synchronously.
 			$cmd = $job_worker_cmd;
 		}
 
+        \writelog($cmd);
 		$cmd_output = shell_exec($cmd);
 		\writelog($cmd_output);
 	}

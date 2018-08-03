@@ -62,89 +62,70 @@ class Worker extends Queuer {
 
 	}
 
+	//Work on the current job
 	private function work() {
 
 		//Set status to "2" after the task has been performed successfully
 		$status = 2;
 
 		$re = $this->workOn("command");
+
+		//Execute callback (if available)
 		$this->workOn("callback_done");
 
+		
 		if ($re === false) {
+			//Job failed. Set the status to 99
 			$status = 99;
+		}else{
+			$status = 3;
+			//TODO: remove the task from queue?
 		}
-		$this->setJobDone($status);
+
+		$this->setJobDone($status, $re);
 
 	}
 
+    /**
+     * Send the job to a specific worker
+     * @param $type (worker name)
+     * @return bool - false if failed, array on success
+     */
 	private function workOn($type) {
 		if (!isset($this->jobData[$type])) {
 			return false;
 		}
 
-		$cmd = $this->jobData[$type];
+		//set default return value
+		$re = false;
 
-		if ($cmd['type'] == 'http') {
-			$re = $this->doHttp($cmd);
+		$cmd = $this->jobData[$type];
+		$workerClass = '\\Millsoft\\Queuer\\Workers\\' . ucfirst($cmd['type']) . 'Worker';
+
+		if(class_exists($workerClass)){
+			$W = new $workerClass();
+			$re = $W->work($cmd);
+		}else{
+			\writelog("Worker '" . $workerClass . "' not found");
 		}
 
 		return $re;
 	}
 
-	//Execute a HTTP task
-	private function doHttp($cmd) {
-
-		echo "Doing HTTP to " . $cmd['url'] . "\n";
-
-		//Store return data here temporary:
-		$return = [];
-
-		$timeout = isset($cmd['timeout']) ? $cmd['timeout'] : (isset($this->config->httpTimeout) ? $this->config->httpTimeout : 10);
-
-		$client = new Client([
-			'timeout' => $timeout,
-		]);
-
-		$method = strtoupper(isset($cmd['method']) ? $cmd['method'] : 'GET');
-
-		$params = array();
-		if (isset($cmd['params'])) {
-			$params['form_params'] = $cmd['params'];
-		}
-
-		try {
-
-			$response = $client->request($method, $cmd['url'], $params);
-
-		} catch (\GuzzleHttp\Exception\RequestException $e) {
-			//echo "ERROR: " . \GuzzleHttp\Psr7\str($e->getRequest());
-			//die("ERROR!!!");
-
-			if ($e->hasResponse()) {
-				//echo Psr7\str($e->getResponse());
-				$return['response'] = $e->getResponse();
-			}
-
-			\writelog("Error! " . $e->getMessage());
-			return false;
-		}
-
-		if (isset($response) && $response !== null) {
-			$return['status_code'] = $response->getStatusCode();
-			$return['body'] = $response->getBody();
-		}
-
-		//echo $response->getBody();
-
-		\writelog("HTTP done");
-	}
 
 	//Set the job status to "done"
 	//2 = OK, 99 = Failed
-	private function setJobDone($status = 2) {
+	private function setJobDone($status = 2, $output = null) {
+
+	    if(is_array($output)){
+	        $output = json_encode($output);
+        }
+
 		//save status:
 		$this->db->update("queue", [
 			"worker_status" => $status,
+			"output" => $output,
+			"time_completed" => date("Y-m-d H:i:s"),
 		], [
 			"id" => $this->job['id'],
 		]);

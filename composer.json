@@ -16,6 +16,9 @@
     },
     "autoload": {
         "files": ["src/helper.php" ],
-        "psr-4": {"Millsoft\\Queuer\\": "src/app"}
+        "psr-4": {
+            "Millsoft\\Queuer\\Workers\\": "src/app/workers",
+            "Millsoft\\Queuer\\": "src/app"
+        }
     }
 }

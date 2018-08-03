@@ -37,7 +37,9 @@ $app->post('/jobs/add', function (Request $request, Response $response) {
 
     $payload = $request->getParsedBody();
 
-    $job_id = $this->jobs->addJob($payload);
+    for ($x = 0 ; $x < 10; $x++){
+        $job_id = $this->jobs->addJob($payload);
+    }
 
     $newResponse = $response->withJson([
     	"status" => "OK",
