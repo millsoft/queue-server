@@ -38,6 +38,7 @@ class Jobs extends Queuer {
 
 		//$jobHash = md5(json_encode($job['command']));
 		$jobHash = md5( time() . rand(1,10000) );
+		$priority = isset($job['priority']) ? $job['priority'] : $this->config->defaultPriority;
 
 		$added = $this->db->insert("queue", [
 			"worker" => 0,
@@ -46,7 +47,7 @@ class Jobs extends Queuer {
 			"job_hash" => $jobHash,
 			"output" => "",
 			"return_code" => null,
-			"priority" => 10,
+			"priority" => $priority,
 			"job" => json_encode($job),
 		]);
 
@@ -57,7 +58,8 @@ class Jobs extends Queuer {
 	public function getJobFromQueue() {
 		$job = $this->db->get("queue", "*", [
 			"worker_status" => 0,
-		]);
+            "ORDER" => ["priority" => "DESC"]
+        ]);
 
 		if (!$job) {
 			return null;
@@ -115,6 +117,7 @@ class Jobs extends Queuer {
 			\writelog("job dispatched");
 
 		}
+            //\writelog("blah");
 
             $jobs_count = $this->getJobsCount();
         }
@@ -133,18 +136,26 @@ class Jobs extends Queuer {
             . ' -j' . $job['id']
             . ' > ' . $logfile;
 
+        //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'];
 		if ($this->config->async) {
+		    \writelog("Starting Background Job " . $job['id']);
+
 			//Execute the script asynchronously without blocking the current process
 			//$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' & printf "%u" $!';
-			$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' >/dev/null 2>&1 &';
-		} else {
+			//$cmd = 'nohup nice -n 10 ' . $job_worker_cmd . ' >/dev/null 2>&1 &';
+
+            $p = new BackgroundProcess($job_worker_cmd);
+            $p->start();
+
+
+        } else {
 			//Execute the script synchronously.
 			$cmd = $job_worker_cmd;
 		}
 
-        \writelog($cmd);
-		$cmd_output = shell_exec($cmd);
-		\writelog($cmd_output);
+        //\writelog($cmd);
+		//$cmd_output = shell_exec($cmd);
+        //\writelog($cmd_output);
 	}
 
 	//Delete all jobs in database

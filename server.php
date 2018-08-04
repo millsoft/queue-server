@@ -21,16 +21,10 @@ $loop = \React\EventLoop\Factory::create();
 
 //Check the database for new jobs every x seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {
-	//$jobs->checkJobs();
+	$jobs->checkJobs();
 });
 
 
-$p = new BackgroundProcess("curl -s -o logs/curllog1.log http://httpbin.org/delay/10");
-$p->start();
-$p = new BackgroundProcess("curl -s -o logs/curllog2.log http://httpbin.org/delay/10");
-$p->start();
-$p = new BackgroundProcess("curl -s -o logs/curllog3.log http://httpbin.org/delay/10");
-$p->start();
 
 echo "******************************************\n";
 echo "* Queuer Server V1.0 by MilMike          *\n";

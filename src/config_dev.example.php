@@ -20,5 +20,9 @@ class Config extends GlobalConfig {
 	public $phpCommand = 'php';
 
 	public $workerScript = __DIR__ . '/work.php';
-	
+
+	//Default priority for tasks. Each task can specific its own priority.
+    //Priority can be between 0 and 1000
+	public $defaultPriority = 500;
+
 }
