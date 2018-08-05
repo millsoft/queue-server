@@ -13,9 +13,9 @@ class Config extends GlobalConfig {
 
 	//how many workers can work simultanously?
 	//This depends on the server power
-	public $workers_count = 1;
+    public $maxThreads = 5;
 
-	public $workers_count = 1;
+    public $workers_count = 1;
 
 	public $phpCommand = 'php';
 

@@ -12,7 +12,7 @@ class Jobs extends Queuer {
 
 	public function __construct() {
 		parent::__construct();
-		//die("Jobs OK");
+		$this->maxThreads = $this->config->maxThreads;
 	}
 
 	//Get the count with new jobs, working jobs etc..
@@ -39,19 +39,21 @@ class Jobs extends Queuer {
 		//$jobHash = md5(json_encode($job['command']));
 		$jobHash = md5( time() . rand(1,10000) );
 		$priority = isset($job['priority']) ? $job['priority'] : $this->config->defaultPriority;
+		$priority = isset($job['context']) ? $job['context'] : $this->config->defaultContext;
 
-		$added = $this->db->insert("queue", [
+		$this->db->insert("queue", [
 			"worker" => 0,
 			"worker_status" => 0,
 			"command" => "",
 			"job_hash" => $jobHash,
 			"output" => "",
 			"return_code" => null,
+			"context" => $context,
 			"priority" => $priority,
 			"job" => json_encode($job),
 		]);
 
-		return $added->id;
+		return $this->db->id();
 	}
 
 	//Get a job wairing in queue
@@ -99,11 +101,7 @@ class Jobs extends Queuer {
 			\writelog("Nothing to do. Waiting for jobs.");
 		}
 
-
-
 		while($jobs_count['waiting']){
-
-
 
 		//Dispatch jobs
 		if ($jobs_count['waiting'] > 0 && $jobs_count['working'] < $this->config->workers_count) {
@@ -130,11 +128,19 @@ class Jobs extends Queuer {
 		//$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
 		$logfile = __DIR__ . "/../../logs/job_" . $job['id'] . ".log";
 
+        //Execute php with the worker script
         $job_worker_cmd = $this->config->phpCommand
+
             . ' ' . $this->config->workerScript
             //. ' -- -j' . $job['id']
+
+            //Add job id param
             . ' -j' . $job['id']
-            . ' > ' . $logfile;
+
+            //Write a log file for current file (for debugging purposes)
+            . ' > ' . $logfile
+
+        ;
 
         //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'];
 		if ($this->config->async) {
@@ -164,4 +170,20 @@ class Jobs extends Queuer {
 		$this->db->query($sql);
 		\writelog("all jobs in the queue has been removed");
 	}
+
+    /**
+     * Get the current status for a job
+     * @param null $job_id
+     * @return mixed - null or array with data
+     */
+	public function getStatus($job_id = null){
+        $job_status = $this->db->get("queue", [
+            "id","worker_status","time_added", "time_completed", "priority"
+        ], [
+            "id" => $job_id
+        ]);
+
+        return $job_status;
+
+    }
 }

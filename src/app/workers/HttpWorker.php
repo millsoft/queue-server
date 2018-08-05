@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * HttpWorker
+ * Will do http requests
+ */
+
 namespace Millsoft\Queuer\Workers;
 
 use GuzzleHttp;
@@ -7,7 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
-class HttpWorker {
+class HttpWorker implements iWorker {
 		//Execute a HTTP task
 	public function work($cmd) {
 

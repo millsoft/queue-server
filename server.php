@@ -34,37 +34,6 @@ echo "******************************************\n";
 $jobs->deleteAllJobs();
 
 
-/*
-//Add a mock job for dev purposes:
-$jobs->addJob([
-	"command" => [
-		"type" => "http",
-		"url" => "http://httpbin.org/put?job=longjob",
-		"method" => "PUT",
-		"timeout" => 5,
-		"params" => [
-			"name" => "Michel",
-			"test" => "12345",
-		],
-
-	],
-
-	//Callback after the job was completed (POST Request)
-	//This can tell the application that something was done.
-	"callback_done" => [
-		"type" => "http",
-		"url" => "http://httpbin.org/get?job=done",
-		"method" => "GET",
-		"params" => [
-			"name" => "Michel",
-			"test" => "12345",
-		],
-	],
-
-]);
-*/
-
-
 
 //$socket->listen(1337);
 $loop->run();

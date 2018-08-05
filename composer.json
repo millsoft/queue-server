@@ -4,7 +4,9 @@
     "authors": [
         {
             "name": "Michael Milawski",
-            "email": "michael.milawski@planet-itservices.com"
+            "email": "michael.milawski@planet-itservices.com",
+            "homepage": "https://www.milmike.com",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -15,10 +17,13 @@
         "monolog/monolog": "^1.23"
     },
     "autoload": {
-        "files": ["src/helper.php" ],
+        "files": [
+            "src/helper.php"
+        ],
         "psr-4": {
             "Millsoft\\Queuer\\Workers\\": "src/app/workers",
             "Millsoft\\Queuer\\": "src/app"
         }
-    }
+    },
+    "homepage": "https://www.milmike.com"
 }

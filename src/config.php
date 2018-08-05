@@ -11,7 +11,10 @@ class GlobalConfig {
 
 	//how many workers can work simultanously?
 	//This depends on the server power
-	public $workers_count = 1;
+	public $maxThreads = 5;
+
+	//default name of the app or job subject. Each job can set its own context
+	public $defaultContext = 'default';
 
 	//should the jobs be executed asynchronously or synchronously?
 	//async = true works currently only on linux, so set it to false when you work on windows.
@@ -21,7 +24,7 @@ class GlobalConfig {
 	public $phpCommand = 'php';
 
 	//Default timeout for HTTP requests - can be overriden for each job
-	public $httpTimeout = 10;
+	public $httpTimeout = 3600;
 
 	public $workerScript = __DIR__ . '/../work.php';
 
