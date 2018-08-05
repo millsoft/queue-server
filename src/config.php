@@ -1,4 +1,14 @@
 <?php
+/**
+ * Copyright (C) 2018 Michael Milawski - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ *  terms of the MIT license.
+ *
+ * This file is the main configuration file. This file will always be loaded.
+ * You can use also another config: config_dev.php. In this file you can overwrite all these settings
+ * here without changing the config.php
+ */
+
 namespace Millsoft\Queuer;
 
 class GlobalConfig {
@@ -31,5 +41,12 @@ class GlobalConfig {
 	public $displayErrorDetails = true;
 
 	public $addContentLengthHeader = false;
+
+
+	//Run the web controller server
+    //Web Controller is server.php but also with the possibility to directly communicate with it over web
+	public $webController = true;
+	public $webControllerPort = 1337;
+
 
 }

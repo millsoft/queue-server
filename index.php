@@ -1,10 +1,15 @@
 <?php
+/**
+ * Copyright (C) 2018 Michael Milawski - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ *  terms of the MIT license.
+ */
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-
 
 require_once __DIR__ . "/src/initapp.php";
 
@@ -13,7 +18,6 @@ $container->logger->addInfo("Hello World");
 $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
 	$name = $args['name'];
 
-	//throw new \Exception("Test error");
 	$response->getBody()->write("Hello, $name");
 	return $response;
 });
@@ -83,9 +87,6 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
     $newResponse = $response->withJson($status);
     return $newResponse;
 });
-
-
-
 
 
 //Middleware - will be used later for auth

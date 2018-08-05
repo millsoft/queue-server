@@ -1,16 +1,22 @@
 <?php
 
+/**
+ * This Class will run anything in the background without blocking the main process
+ * Currently this only works on linux server
+ * Code is based by https://github.com/pandasanjay/php-script-background-processer
+ */
+
 namespace Millsoft\Queuer;
 
 class BackgroundProcess{
     private $pid;
     private $command;
-    private $debugger=true;
     private $msg="";
 
-    /*
-    * @Param $cmd: Pass the linux command want to run in background
-    */
+    /**
+     * BackgroundProcess constructor.
+     * @param null $cmd - the linux command that should be run in the background
+     */
     public function __construct($cmd=null){
 
         if(!empty($cmd))

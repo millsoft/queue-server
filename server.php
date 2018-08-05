@@ -1,39 +1,31 @@
 <?php
+/**
+ * Copyright (C) 2018 Michael Milawski - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ *  terms of the MIT license.
+ */
+
 namespace Millsoft\Queuer;
+
+echo "******************************************\n";
+echo "* Queue Server V1.0 by MilMike          *\n";
+echo "******************************************\n";
 
 require_once __DIR__ . "/src/init.php";
 $jobs = new Jobs();
-//$jobs->checkJobs();
 
-/*
-$app = function ($request, $response) {
-$response->writeHead(200, array('Content-Type' => 'text/plain'));
-$response->end(print_r($request, 1));
-};
- */
+//Here are the configs from your config file, if you need them somewhere:
+//$config = $jobs->config;
 
 $loop = \React\EventLoop\Factory::create();
-//$socket = new \React\Socket\Server('[::1]:1337', $loop);
-//$http = new \React\Http\Server($socket, $loop);
 
-//$http->on('request', $app);
-//echo "Server running at http://127.0.0.1:1337\n";
-
-//Check the database for new jobs every x seconds:
+//Check the database for new jobs every 5 seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {
 	$jobs->checkJobs();
 });
 
 
+//Delete all jobs if necessary: (good for tests)
+//$jobs->deleteAllJobs();
 
-echo "******************************************\n";
-echo "* Queuer Server V1.0 by MilMike          *\n";
-echo "******************************************\n";
-
-//At first delete all jobs
-$jobs->deleteAllJobs();
-
-
-
-//$socket->listen(1337);
 $loop->run();

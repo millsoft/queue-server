@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * What is this file?
+ * You can use your own "dev" version of config file, simply copy this file as "config_dev.php" and
+ * change the settings. This file is useful for development purposes.
+ */
+
 namespace Millsoft\Queuer;
 
 class Config extends GlobalConfig {
