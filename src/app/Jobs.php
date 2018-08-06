@@ -87,7 +87,6 @@ class Jobs extends Queuer
 
         $this->db->update("queue", [
             "worker_status" => 1,
-            //TODO: update other stuff, like worker_id
         ], [
             "id" => $job['id'],
         ]);

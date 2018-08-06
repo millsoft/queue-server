@@ -3,3 +3,4 @@ vendor
 src/config_dev.php
 nohup.out
 .htaccess
+start_server.sh
