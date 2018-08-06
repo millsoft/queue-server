@@ -3,7 +3,8 @@
 /**
  * What is this file?
  * You can use your own "dev" version of config file, simply copy this file as "config_dev.php" and
- * change the settings. This file is useful for development purposes.
+ * change the settings. This file is useful for development purposes and won't be commited using git
+ * In this file you can overwrite everything stored in the config.php file.
  */
 
 namespace Millsoft\Queuer;
@@ -11,10 +12,10 @@ namespace Millsoft\Queuer;
 class Config extends GlobalConfig {
 	public $db = [
 		"host" => "",
-		"username" => "",
-		"password" => "",
-		"database" => "",
-		"port" => 3306, //optional, default 3306
+		"dbname" => "",
+		"user" => "",
+		"pass" => "",
+		//"port" => 3306,
 	];
 
 	//how many workers can work simultanously?
