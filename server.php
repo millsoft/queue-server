@@ -7,9 +7,9 @@
 
 namespace Millsoft\Queuer;
 
-echo "******************************************\n";
-echo "* Queue Server V1.0 by MilMike          *\n";
-echo "******************************************\n";
+echo "*******************************************\n";
+echo "* Queue Server V0.0.1 by Michael Milawski *\n";
+echo "*******************************************\n";
 
 require_once __DIR__ . "/src/init.php";
 $jobs = new Jobs();

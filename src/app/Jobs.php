@@ -126,6 +126,7 @@ class Jobs extends Queuer
     {
         $jobs_count = $this->getJobsCount();
 
+  
 
         if (!$jobs_count['waiting']) {
             return false;
@@ -134,11 +135,12 @@ class Jobs extends Queuer
         while ($jobs_count['waiting']) {
 
             $this->printJobStatus();
-
+            
             //Dispatch jobs
-            if ($jobs_count['waiting'] > 0 && $jobs_count['working'] < $this->maxThreads) {
+            if ($jobs_count['waiting'] > 0 && ($jobs_count['working'] < $this->maxThreads) ) {
                 //Dispatch new job to worker
-
+                \writelog("Getting a job from queue");
+                
                 //Get next job from the queue
                 $job = $this->getJobFromQueue();
 

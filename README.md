@@ -4,7 +4,7 @@
 The Queue Server is a server that can work on long taking tasks in the background. You add a "job" by simply posting a json payload to a URL. Using this queue server you can decouple long taking tasks from the frontend. You can for example use it to send hundreds of E-Mails or create many thumbnails. The use doesn't have to wait for the execution and his browser won't be blocked. After the execution the queue server can inform your application that the job was done by calling a callback URL.
 
 #### Requirments
-- PHP 7
+- PHP 7 (php cli for the server)
 - MySQL
 - Linux server
 - Composer
@@ -12,7 +12,8 @@ The Queue Server is a server that can work on long taking tasks in the backgroun
 #### Installation
 - At first do `composer install` to install all dependencies.
 - Now install the database. The sql dump with an empty database you can find in the `assets/database` folder.
-- Edit `src/config.php` and specify your database there, also configure the settings if you wish. 
+- Edit `src/config.php` and specify your database there, also configure the settings if you wish.
+- Copy .htaccess_dist to .htaccess, you can extend the .htaccess if you wish. 
 
 #### Usage
 ##### Starting the server
@@ -29,7 +30,7 @@ Use any http request library (eg. Guzzle or curl) to send a POST request to `/jo
 
 ```json
 {
-"priority" : 200,
+"priority" : 800,
 "context" : "MyCoolApp",
   "command": {
     "type": "http",
