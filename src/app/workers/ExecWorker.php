@@ -8,13 +8,14 @@
 namespace Millsoft\Queuer\Workers;
 
 class ExecWorker implements iWorker{
-		//Execute a HTTP task
+
+    /**
+     * Execute a shell command
+     * @param $cmd
+     */
 	public function work($cmd) {
-        //echo "executing system call" . $cmd['cmd'] . "\n";
         $shell_command = $cmd['cmd'];
         exec($shell_command );
-        //TODO: Nothing here yet!!!
-
 	}
 
 }

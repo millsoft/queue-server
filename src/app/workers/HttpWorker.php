@@ -11,8 +11,10 @@ use GuzzleHttp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
-
 class HttpWorker implements iWorker {
+
+    public $job_id = null;
+
 		//Execute a HTTP task
 	public function work($cmd) {
 
@@ -36,14 +38,17 @@ class HttpWorker implements iWorker {
 
 		try {
 
-			$response = $client->request($method, $cmd['url'], $params);
+		    $url = $cmd['url'];
+
+            //Replace placeholders with actual values:
+		    $url = $this->parseRequestParams($url);
+
+			$response = $client->request($method, $url , $params);
+            $body = $response->getBody();
 
 		} catch (\GuzzleHttp\Exception\RequestException $e) {
-			//echo "ERROR: " . \GuzzleHttp\Psr7\str($e->getRequest());
-			//die("ERROR!!!");
 
 			if ($e->hasResponse()) {
-				//echo Psr7\str($e->getResponse());
 				$return['response'] = $e->getResponse();
 			}
 
@@ -54,12 +59,8 @@ class HttpWorker implements iWorker {
 		if (isset($response) && $response !== null) {
             $body = (string) $response->getBody();
 
-            /*
-            $statusCode = $response->getStatusCode();
-            $return['status_code'] = $statusCode ;
-            $return['body'] =  $body;
-            */
-
+            //Output the http request
+            echo $body;
             $return = $body;
 		}
 
@@ -68,5 +69,11 @@ class HttpWorker implements iWorker {
 		return $return;
 
 	}
+
+	//Replace placeholder variables with actual values
+	private function parseRequestParams($req){
+	    $req = str_replace("__JOBID__", $this->job_id, $req);
+	    return $req;
+    }
 
 }

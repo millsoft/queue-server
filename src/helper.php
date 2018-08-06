@@ -4,7 +4,7 @@ function writelog($txt, $extra = null) {
 	if(isCli()){
 		echo $txt . "\n";
 	}else{
-		//TODO: Logging for web
+		echo $txt . '<br/>';
 	}
 }
 

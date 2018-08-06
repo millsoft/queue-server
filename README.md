@@ -51,12 +51,12 @@ Use any http request library (eg. Guzzle or curl) to send a POST request to `/jo
 
 The job payload is a JSON.
 
-each job can have the `priority` value (default = 500), the higher this value the earlier your job will be executed. You can also use a `context` - this is just a string with any name, eg. your app name, or what you are trying to do, eg "send_mailing".
+Each job can have the `priority` value (default = 500), the higher this value the earlier your job will be executed. You can also use a `context` - this is just a string with any name, eg. your app name, or what you are trying to do, eg "send_mailing".
 
 There is also the `command` object. The command can be of type `http` or `exec` - These workers are stored in `src/app/workers`.
 In this example the http worker will be executed to do http requests. This could be a file on a server which takes some time to execute. For example this could be a GET request to `sendmails.php?mailing=1234` which will send a lot of emails in the background. 
 
-Once the job is done, you can use the `callback_done` callback to call another URL or execute a system command. This will inform another server that the job is done. Callbacks are not mandatory but can be useful in some cases. 
+Once the job is done, you can use the `callback_done` callback to call another URL or execute a system command. This will inform your app that the job is done. Callbacks are not required but can be useful in most cases. 
 
 Here is another example by using the `ExecWorker` which will execute a command on your server, The command can be literaly anything (at least anything that the www user can do). Here I also don't use the `callback_done` callback.:
 
@@ -89,6 +89,34 @@ Example output
 `GET: /jobs/status/12345`
 
 
+### Workers
+A worker is a module that works on a specific task. 
+There are currently 2 workers:
+- HttpWorker
+- ExecWorker
+
+#### HttpWorker
+The HttpWorker is a worker which creates HTTP requests. You can see an example above. You can use the HttpWorker to call a long taking script on any URL. You can also specify the request type (GET = default, POST, PUT, DELETE, etc.)
+
+##### How to pass the job id to the worker?
+Sometimes you want to send the auto generated job id to the HttpWorker URL. You can do this by doing following placeholder to the URL:
+```json
+{
+  "command": {
+    "type": "http",
+    "url": "http://httpbin.org/get?jobid=__JOBID__"
+  }
+}
+```
+
+the `__JOBID__` placeholder will be automatically replaced with the numeric job ID. The worker "knows" then about its own ID so you can control the job inside the worker process. For example you could update the job progress - to do this, you need to know the job id. 
+
+#### ExecWorker
+The ExecWorker will execute a system command. For example you can call a bash script, compile an application, deploy your apps.
+
+
+#### How to test the workers without the queue server?
+Simply call `php work.php -j123` in your terminal. This is how the queue server calls each job. You can see the output directly in the console. Every output will also be logged in the queue database in the `output` column.
 
 
 ## Info

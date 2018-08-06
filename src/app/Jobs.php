@@ -48,7 +48,6 @@ class Jobs extends Queuer
 
         \writelog("Adding job to queue");
 
-        //$jobHash = md5(json_encode($job['command']));
         $jobHash = md5(time() . rand(1, 10000));
         $priority = isset($job['priority']) ? $job['priority'] : $this->config->defaultPriority;
         $context = isset($job['context']) ? $job['context'] : $this->config->defaultContext;

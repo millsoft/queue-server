@@ -38,6 +38,9 @@ class Worker extends Queuer {
 		$this->work();
 	}
 
+    /**
+     * Validate current job
+     */
 	private function validateJob() {
 		$errors = [];
 
@@ -45,7 +48,7 @@ class Worker extends Queuer {
 			$errors[] = "'command' key not found in the job";
 		} else {
 			if (!is_array($this->jobData)) {
-				$errors[] = "'command' should be array";
+				$errors[] = "'command' should be an array";
 			} else {
 				$cmd = $this->jobData['command'];
 				if (!isset($cmd['type'])) {
@@ -56,7 +59,7 @@ class Worker extends Queuer {
 		}
 
 		if (!empty($errors)) {
-			echo implode("\n", $erros);
+			echo implode("\n", $errors);
 			die();
 		}
 
@@ -79,7 +82,6 @@ class Worker extends Queuer {
 			$status = 99;
 		}else{
 			$status = 3;
-			//TODO: remove the task from queue?
 		}
 
 		$this->setJobDone($status, $re);
@@ -104,6 +106,8 @@ class Worker extends Queuer {
 
 		if(class_exists($workerClass)){
 			$W = new $workerClass();
+			$W->job_id = $this->job['id'];
+
 			$re = $W->work($cmd);
 		}else{
 			\writelog("Worker '" . $workerClass . "' not found");
