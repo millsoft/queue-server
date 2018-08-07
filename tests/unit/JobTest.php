@@ -1,5 +1,6 @@
 <?php
 
+use \Millsoft\Queuer\Worker;
 use \Millsoft\Queuer\Jobs;
 use \Codeception\Util\Fixtures;
 
@@ -77,8 +78,24 @@ class JobTest extends \Codeception\Test\Unit
         $this->assertArrayHasKey("time_completed", $status);
     }
 
+
     /**
      * @depends testCheckJob
+     */
+    public function testWorker(){
+        $job_id = Fixtures::get("job_id");
+
+        $worker = new Worker();
+        $job_return = $worker->loadJob($job_id);
+
+        $this->assertTrue($job_return['status'] === 3, "Job ended successfully");
+
+        codecept_debug($job_return);
+    }
+
+
+    /**
+     * @depends testWorker
      */
     public function testDeleteJob(){
         $job_id = Fixtures::get("job_id");
@@ -90,6 +107,32 @@ class JobTest extends \Codeception\Test\Unit
         //check if the job is really deleted:
         $status = $this->jobs->getStatus($job_id);
         $this->assertFalse($status);
+    }
+
+
+
+
+    public function testTimeoutWorker(){
+
+        //Add a job:
+        $job = array(
+            "priority" => 200,
+            "context" => "test",
+            "command" => array(
+                "type" => "http",
+                "timeout" => "2",
+                "url" => "http://httpbin.org/delay/4"
+            )
+        );
+
+        $job_id = $this->jobs->addJob($job);
+
+        $worker = new Worker();
+        $job_return = $worker->loadJob($job_id);
+
+
+        codecept_debug($job_return);
+        $this->assertTrue($job_return['status'] === 99, "Job failed successfully (duh)");
     }
 
 

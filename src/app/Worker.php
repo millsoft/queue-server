@@ -15,14 +15,27 @@ class Worker extends Queuer {
 	private $job = null;
 	private $jobData = null;
 
-	private $returnData = [];
+	private $returnData = [
+	    'log' => [],
+        'status' => 99
+    ];
 
-	public function __construct($job_id) {
+
+	public function __construct($job_id = null) {
 		parent::__construct();
-		$this->loadJob($job_id);
+
+		if($job_id !== null){
+		    //User provided a job id, start job now.
+            return $this->loadJob($job_id);
+        }
 	}
 
-	private function loadJob($job_id) {
+    /**
+     * Load the job and execute it.
+     * @param $job_id
+     * @return array - data with various logs and info about the execution process
+     */
+	public function loadJob($job_id) {
 		$this->job = $this->db->get("queue", "*", [
 			"id" => $job_id,
 		]);
@@ -36,6 +49,8 @@ class Worker extends Queuer {
 
 		$this->validateJob();
 		$this->work();
+
+		return $this->returnData;
 	}
 
     /**
@@ -59,7 +74,10 @@ class Worker extends Queuer {
 		}
 
 		if (!empty($errors)) {
-			echo implode("\n", $errors);
+			$strErrors = implode("\n", $errors);
+			echo $strErrors;
+
+			$this->addLog("ERROR: " . $strErrors);
 			die();
 		}
 
@@ -72,6 +90,7 @@ class Worker extends Queuer {
 		$status = 2;
 
 		$re = $this->workOn("command");
+		$this->returnData["output"] = $re;
 
 		//Execute callback (if available)
 		$this->workOn("callback_done");
@@ -104,12 +123,19 @@ class Worker extends Queuer {
 		$cmd = $this->jobData[$type];
 		$workerClass = '\\Millsoft\\Queuer\\Workers\\' . ucfirst($cmd['type']) . 'Worker';
 
-		if(class_exists($workerClass)){
-			$W = new $workerClass();
+        $this->addLog("workOn: " . $type);
+
+        if(class_exists($workerClass)){
+            $this->addLog("starting...");
+
+            $W = new $workerClass();
 			$W->job_id = $this->job['id'];
 
 			$re = $W->work($cmd);
-		}else{
+            $this->returnData['log'][] = "work done";
+
+        }else{
+            $this->addLog("worker class not found: " . $workerClass);
 			\writelog("Worker '" . $workerClass . "' not found");
 		}
 
@@ -133,6 +159,17 @@ class Worker extends Queuer {
 		], [
 			"id" => $this->job['id'],
 		]);
+
+	    $this->returnData['status'] = $status;
+	    $this->addLog("DONE_STATUS=" . $status);
 	}
+
+    /**
+     * Add log entry to worker log
+     * @param $txt
+     */
+	private function addLog($txt){
+        $this->returnData['log'][] = $txt;
+    }
 
 }
