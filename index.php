@@ -13,15 +13,6 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require_once __DIR__ . "/src/initapp.php";
 
-$container->logger->addInfo("Hello World");
-
-$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-	$name = $args['name'];
-
-	$response->getBody()->write("Hello, $name");
-	return $response;
-});
-
 $app->get('/', function (Request $request, Response $response, array $args) {
     $this->logger->addInfo("Opened Index page");
 
@@ -32,6 +23,8 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 
 	return $newResponse;
 });
+
+
 
 
 $app->post('/jobs/add', function (Request $request, Response $response) {
@@ -45,6 +38,23 @@ $app->post('/jobs/add', function (Request $request, Response $response) {
     	"job_id" => $job_id
     ]);
 
+
+	return $newResponse;
+});
+
+/**
+ * Delete a single job
+ */
+$app->get('/jobs/delete/{id}', function (Request $request, Response $response, $args) {
+    $job_id = (int) $args['id'];
+    $this->logger->addInfo("Deleting job " . $job_id);
+
+    $deleted = $this->jobs->deleteJob($job_id);
+
+    $newResponse = $response->withJson([
+    	"status" => $deleted ? 'OK' : 'ERROR',
+    	"job_id" => $job_id
+    ]);
 
 	return $newResponse;
 });

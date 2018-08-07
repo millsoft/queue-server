@@ -29,8 +29,10 @@ class Jobs extends Queuer
 
         $jobs_waiting = $this->db->count("queue", ["worker_status" => 0]);
         $jobs_working = $this->db->count("queue", ["worker_status" => 1]);
+        $jobs_all = $this->db->count("queue");
 
         $re = [
+            "all_jobs" => $jobs_all,
             "waiting" => $jobs_waiting,
             "working" => $jobs_working,
             "max_threads" => $this->maxThreads,
@@ -210,6 +212,28 @@ class Jobs extends Queuer
         $this->db->query($sql);
         \writelog("all jobs in the queue has been removed");
     }
+
+    /**
+     * Delete a single job
+     * @param $job_id
+     * @return bool
+     */
+    public function deleteJob($job_id)
+    {
+        $deleted = $this->db->delete("queue", array(
+            "id" => $job_id
+        ));
+
+        if($deleted->rowCount()){
+            \writelog("Jobs {$job_id} has been deleted");
+            return true;
+        }else{
+            \writelog("Jobs {$job_id} could not be deleted");
+            return false;
+        }
+    }
+
+
 
     /**
      * Get the current status for a job

@@ -12,10 +12,14 @@
 namespace Millsoft\Queuer;
 
 class GlobalConfig {
+
+    //Database configuration: (MYSQL)
+    //See file assets/database/queueserver.sql for database dump.
+
 	public $db = [
-		"host" => "",
-		"dbname" => "",
-		"user" => "",
+		"host" => "0.0.0.0",
+		"dbname" => "queue",
+		"user" => "root",
 		"pass" => "",
 	];
 

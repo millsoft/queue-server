@@ -25,5 +25,8 @@
             "Millsoft\\Queuer\\": "src/app"
         }
     },
-    "homepage": "https://www.milmike.com"
+    "homepage": "https://www.milmike.com",
+    "require-dev": {
+        "codeception/codeception": "^2.4"
+    }
 }

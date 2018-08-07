@@ -77,6 +77,7 @@ Example output
 {
     "status": 200,
     "data": {
+        "jobs_all": 80,
         "waiting": 0,
         "working": 18,
         "max_threads": 20,
@@ -88,6 +89,8 @@ Example output
 ##### Get the status of a single job
 `GET: /jobs/status/12345`
 
+##### Delete a job
+`GET: /jobs/delete/12345`
 
 ### Workers
 A worker is a module that works on a specific task. 
