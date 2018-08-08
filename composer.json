@@ -14,7 +14,8 @@
         "react/http": "^0.6.0",
         "guzzlehttp/guzzle": "^6.3",
         "slim/slim": "^3.0",
-        "monolog/monolog": "^1.23"
+        "monolog/monolog": "^1.23",
+        "slim/twig-view": "^2.4"
     },
     "autoload": {
         "files": [

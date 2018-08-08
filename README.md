@@ -4,7 +4,7 @@
 The Queue Server is a server that can work on long taking tasks in the background. You add a "job" by simply posting a json payload to a URL. Using this queue server you can decouple long taking tasks from the frontend. You can for example use it to send hundreds of E-Mails or create many thumbnails. The use doesn't have to wait for the execution and his browser won't be blocked. After the execution the queue server can inform your application that the job was done by calling a callback URL.
 
 #### Requirments
-- PHP 7 (php cli for the server)
+- PHP 7.1 (php cli for the server)
 - MySQL
 - Linux server
 - Composer

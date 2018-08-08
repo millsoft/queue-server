@@ -8,7 +8,7 @@
 namespace Millsoft\Queuer;
 
 echo "*******************************************\n";
-echo "* Queue Server V0.0.1 by Michael Milawski *\n";
+echo "* Queue Server V0.1.0 by Michael Milawski *\n";
 echo "*******************************************\n";
 
 require_once __DIR__ . "/src/init.php";
@@ -25,8 +25,8 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 	//Stop the server by a file (we need a better solution, OK for now)
     $stop_file = __DIR__ . '/.stop_server';
     if(file_exists($stop_file)){
-    	die("Server was stopped by the .stop_server file");
-    	unlink($stop_file);
+        unlink($stop_file);
+        die("Server was stopped by the .stop_server file\n");
     }
 
 	$jobs->checkJobs();
