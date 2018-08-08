@@ -25,6 +25,15 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 });
 
 
+//Stop the server
+$app->get('/server/stop', function (Request $request, Response $response) {
+    $this->logger->addInfo("Stopping the server");
+
+    $stop_file = __DIR__ . '/.stop_server';
+    touch($stop_file);
+
+    return $newResponse;
+});
 
 
 $app->post('/jobs/add', function (Request $request, Response $response) {

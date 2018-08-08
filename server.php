@@ -21,6 +21,14 @@ $loop = \React\EventLoop\Factory::create();
 
 //Check the database for new jobs every 5 seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {
+    
+	//Stop the server by a file (we need a better solution, OK for now)
+    $stop_file = __DIR__ . '/.stop_server';
+    if(file_exists($stop_file)){
+    	die("Server was stopped by the .stop_server file");
+    	unlink($stop_file);
+    }
+
 	$jobs->checkJobs();
 });
 
