@@ -1,0 +1,72 @@
+<!--
+  ~ Copyright (C) 2018 Michael Milawski - All Rights Reserved
+  ~ You may use, distribute and modify this code under the
+  ~  terms of the MIT license.
+  -->
+
+<div class="sidebar" data-background-color="black" data-active-color="danger">
+
+    <!--
+        Tip 1: you can change the color of the sidebar's background using: data-background-color="white | black"
+        Tip 2: you can change the color of the active button using the data-active-color="primary | info | success | warning | danger"
+    -->
+
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="#" class="simple-text">
+                Queue Server
+            </a>
+        </div>
+
+        <ul class="nav">
+            <li class="active">
+                <a href="{{ path_for('management.dashboard') }}">
+                    <i class="ti-panel"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li>
+                <a href="{{ path_for('management.queue') }}">
+                    <i class="ti-user"></i>
+                    <p>Queue</p>
+                </a>
+            </li>
+            <li>
+                <a href="table.html">
+                    <i class="ti-view-list-alt"></i>
+                    <p>Table List</p>
+                </a>
+            </li>
+            <li>
+                <a href="typography.html">
+                    <i class="ti-text"></i>
+                    <p>Typography</p>
+                </a>
+            </li>
+            <li>
+                <a href="icons.html">
+                    <i class="ti-pencil-alt2"></i>
+                    <p>Icons</p>
+                </a>
+            </li>
+            <li>
+                <a href="maps.html">
+                    <i class="ti-map"></i>
+                    <p>Maps</p>
+                </a>
+            </li>
+            <li>
+                <a href="notifications.html">
+                    <i class="ti-bell"></i>
+                    <p>Notifications</p>
+                </a>
+            </li>
+            <li class="active-pro">
+                <a href="upgrade.html">
+                    <i class="ti-export"></i>
+                    <p>Upgrade to PRO</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

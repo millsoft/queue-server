@@ -100,11 +100,16 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
  */
 
 
-//Get the job status for all jobs in the queue
 $app->get('/management', function (Request $request, Response $response) {
-
     return $this->view->render($response, 'index.html', [
         'name' => "cool"
     ]);
+})->setName("management.dashboard");
 
-});
+$app->get('/management/queue', function (Request $request, Response $response) {
+    return $this->view->render($response, 'queue.html');
+})->setName("management.queue");
+
+
+
+
