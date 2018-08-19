@@ -4,6 +4,8 @@
 
 {% block content %}
 <div class="row">
+
+
     <div class="col-lg-3 col-sm-6">
         <div class="card">
             <div class="content">
@@ -15,8 +17,8 @@
                     </div>
                     <div class="col-xs-7">
                         <div class="numbers">
-                            <p>Waiting Jobs</p>
-                            51
+                            <p>All Jobs</p>
+                            {{ counts.all_jobs }}
                         </div>
                     </div>
                 </div>
@@ -35,13 +37,13 @@
                 <div class="row">
                     <div class="col-xs-5">
                         <div class="icon-big icon-success text-center">
-                            <i class="ti-wallet"></i>
+                            <i class="ti-time"></i>
                         </div>
                     </div>
                     <div class="col-xs-7">
                         <div class="numbers">
-                            <p>Processing</p>
-                            2
+                            <p>Waiting</p>
+                            {{ counts.waiting }}
                         </div>
                     </div>
                 </div>
@@ -60,13 +62,13 @@
                 <div class="row">
                     <div class="col-xs-5">
                         <div class="icon-big icon-danger text-center">
-                            <i class="ti-pulse"></i>
+                            <i class="ti-bolt-alt"></i>
                         </div>
                     </div>
                     <div class="col-xs-7">
                         <div class="numbers">
-                            <p>Errors</p>
-                            23
+                            <p>Working</p>
+                            {{ counts.working }}
                         </div>
                     </div>
                 </div>
@@ -84,14 +86,15 @@
             <div class="content">
                 <div class="row">
                     <div class="col-xs-5">
-                        <div class="icon-big icon-info text-center">
-                            <i class="ti-twitter-alt"></i>
+                        <div class="icon-big text-center">
+                            <i class="ti-hummer"></i>
                         </div>
                     </div>
                     <div class="col-xs-7">
                         <div class="numbers">
-                            <p>Followers</p>
-                            +45
+                            <p>Threads</p>
+                            {{ counts.free_threads }}
+                            
                         </div>
                     </div>
                 </div>

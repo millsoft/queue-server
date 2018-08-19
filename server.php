@@ -17,7 +17,41 @@ $jobs = new Jobs();
 //Here are the configs from your config file, if you need them somewhere:
 //$config = $jobs->config;
 
+$port = isset($jobs->config->webSocketPort) ? $jobs->config->webSocketPort : 1337;
+$webSocketEnabled = isset($jobs->config->webSocket) && $jobs->config->webSocket ? true : false;
+
 $loop = \React\EventLoop\Factory::create();
+
+/**
+ * WEBSOCKET SERVER
+ */
+
+if($webSocketEnabled){
+
+	\writelog("Starting WebSocket Server in port " . $port);
+	$socket = new \React\Socket\Server($port, $loop);
+	$socket->on('connection', function ($conn) {
+
+	    // Event listener for incoming data
+	    $conn->on('data', function ($data) use ($conn)  {
+	        // Write data back to the connection
+	        //$data = "DATA";
+	        
+	        //$data = "HTTP/1.1 200 OK\n";
+	        $conn->write($data);
+
+	        \writelog("Websocket Request");
+	    });
+	});
+
+
+}
+
+
+
+/**
+ * QUEUE SERVER
+ */
 
 //Check the database for new jobs every 5 seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {

@@ -6,7 +6,7 @@
 ob_start();
 echo "Long task started...";
 
-for ($a = 0; $a < 5 ; $a++){
+for ($a = 0; $a < 10 ; $a++){
     echo "Read Line #" . $a . "\n";
     flush();
     sleep(1);

@@ -7,7 +7,7 @@ $app->get('/', function (Request $request, Response $response, array $args) {
     $this->logger->addInfo("Opened Index page");
 
     $newResponse = $response->withJson([
-        "version" => "1.0.0",
+        "version" => "0.1.0",
         "status" => "running",
     ]);
 
@@ -100,11 +100,16 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
  */
 
 
+/*
 $app->get('/management', function (Request $request, Response $response) {
     return $this->view->render($response, 'index.html', [
         'name' => "cool"
     ]);
 })->setName("management.dashboard");
+*/
+
+$app->get('/management', \Millsoft\Queuer\Management::class . ':dashboard')->setName("management.dashboard");
+
 
 $app->get('/management/queue', function (Request $request, Response $response) {
     return $this->view->render($response, 'queue.html');

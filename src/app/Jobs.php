@@ -32,11 +32,11 @@ class Jobs extends Queuer
         $jobs_all = $this->db->count("queue");
 
         $re = [
-            "all_jobs" => $jobs_all,
-            "waiting" => $jobs_waiting,
-            "working" => $jobs_working,
-            "max_threads" => $this->maxThreads,
-            "free_threads" => $this->maxThreads - $jobs_working,
+            "all_jobs" =>(int)  $jobs_all,
+            "waiting" => (int) $jobs_waiting,
+            "working" => (int) $jobs_working,
+            "max_threads" => (int) $this->maxThreads,
+            "free_threads" => (int)  ($this->maxThreads - $jobs_working),
         ];
 
         $this->jobStatus = $re;
