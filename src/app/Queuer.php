@@ -9,6 +9,7 @@ class Queuer {
 
 	public $config = null;
 	public $db = null;
+	private $statusFile = __DIR__ . "/../../.statusfile";
 
 	public function __construct() {
 		$this->init();
@@ -88,5 +89,26 @@ class Queuer {
 	public function getConfig(){
 		return $this->config;
 	}
+
+    //Touch the status file so the websocket know something was updated
+    public function updateStatusFile(){
+        touch($this->statusFile);
+    }
+
+    /**
+     * Get the timestamp of the status file
+     * @return int timestamp
+     */
+    public function getStatusFileTimeStamp(){
+    	if(!file_exists($this->statusFile)){
+    		return 0;
+    	}
+
+    	$ti = filemtime($this->statusFile);
+    	$ti = date("H:i:s", $ti);
+    	return $ti;
+
+
+    }
 
 }

@@ -7,6 +7,10 @@
 
 namespace Millsoft\Queuer;
 
+use Ratchet\WebSocket\WsServer;
+use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+
 echo "*******************************************\n";
 echo "* Queue Server V0.1.0 by Michael Milawski *\n";
 echo "*******************************************\n";
@@ -27,10 +31,43 @@ $loop = \React\EventLoop\Factory::create();
  */
 
 if($webSocketEnabled){
+	\writelog("Starting WebSocket Server in port " . $port);
+
+	/*
+	$app = new \Ratchet\App('0.0.0.0', $port);
+	$app->route('/status', new \Millsoft\Queuer\WebSocketServer);
+	//$app->route('/echo', new Ratchet\Server\EchoServer, array('*'));
+	$app->run();
+	*/
+
+$loop->addTimer(10, function() use($port){
+
+	\writelog("starting WebSocketServer");
+
+    $server = IoServer::factory(
+        new HttpServer(
+            new WsServer(
+                new \Millsoft\Queuer\WebSocketServer()
+            )
+        ),
+        $port
+    );
+	$server->run();
+
+
+});
+
+}
+
+
+/*
+if($webSocketEnabled){
 
 	\writelog("Starting WebSocket Server in port " . $port);
 	$socket = new \React\Socket\Server($port, $loop);
 	$socket->on('connection', function ($conn) {
+
+		$conn->write("OK");
 
 	    // Event listener for incoming data
 	    $conn->on('data', function ($data) use ($conn)  {
@@ -43,11 +80,9 @@ if($webSocketEnabled){
 	        \writelog("Websocket Request");
 	    });
 	});
-
-
 }
 
-
+*/
 
 /**
  * QUEUE SERVER
@@ -62,7 +97,6 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
         unlink($stop_file);
         die("Server was stopped by the .stop_server file\n");
     }
-
 	$jobs->checkJobs();
 });
 
@@ -70,4 +104,5 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 //Delete all jobs if necessary: (good for tests)
 //$jobs->deleteAllJobs();
 
+\writelog("Run");
 $loop->run();

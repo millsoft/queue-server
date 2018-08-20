@@ -160,6 +160,8 @@ class Worker extends Queuer {
 			"id" => $this->job['id'],
 		]);
 
+		$this->updateStatusFile();
+
 	    $this->returnData['status'] = $status;
 	    $this->addLog("DONE_STATUS=" . $status);
 	}

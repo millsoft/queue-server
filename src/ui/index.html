@@ -18,7 +18,8 @@
                     <div class="col-xs-7">
                         <div class="numbers">
                             <p>All Jobs</p>
-                            {{ counts.all_jobs }}
+                            <span v-if="!status.all_jobs">...</span>
+                            ${status.all_jobs}
                         </div>
                     </div>
                 </div>
@@ -43,7 +44,7 @@
                     <div class="col-xs-7">
                         <div class="numbers">
                             <p>Waiting</p>
-                            {{ counts.waiting }}
+                            ${status.waiting}
                         </div>
                     </div>
                 </div>
@@ -68,7 +69,7 @@
                     <div class="col-xs-7">
                         <div class="numbers">
                             <p>Working</p>
-                            {{ counts.working }}
+                            ${status.working}
                         </div>
                     </div>
                 </div>
@@ -93,8 +94,7 @@
                     <div class="col-xs-7">
                         <div class="numbers">
                             <p>Threads</p>
-                            {{ counts.free_threads }}
-                            
+                            ${status.max_threads}
                         </div>
                     </div>
                 </div>

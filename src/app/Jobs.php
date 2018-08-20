@@ -66,6 +66,7 @@ class Jobs extends Queuer
             "job" => json_encode($job),
         ]);
 
+        $this->updateStatusFile();
         return $this->db->id();
     }
 
@@ -92,6 +93,7 @@ class Jobs extends Queuer
             "id" => $job['id'],
         ]);
 
+        $this->updateStatusFile();
         return $job;
 
     }
@@ -125,8 +127,6 @@ class Jobs extends Queuer
     public function checkJobs()
     {
         $jobs_count = $this->getJobsCount();
-
-  
 
         if (!$jobs_count['waiting']) {
             return false;
@@ -223,6 +223,8 @@ class Jobs extends Queuer
         $deleted = $this->db->delete("queue", array(
             "id" => $job_id
         ));
+        
+        $this->updateStatusFile();
 
         if($deleted->rowCount()){
             \writelog("Jobs {$job_id} has been deleted");
