@@ -49,7 +49,7 @@ class GlobalConfig {
 
 	//Run the web controller server
     //Web Controller is server.php but also with the possibility to directly communicate with it over web
-	public $webSocket = true;
+	public $webSocket = false;
 	public $webSocketPort = 8080;
 
 
