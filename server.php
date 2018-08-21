@@ -39,7 +39,7 @@ if($webSocketEnabled){
 	//$app->route('/echo', new Ratchet\Server\EchoServer, array('*'));
 	$app->run();
 	*/
-
+/*
 $loop->addTimer(10, function() use($port){
 
 	\writelog("starting WebSocketServer");
@@ -56,6 +56,7 @@ $loop->addTimer(10, function() use($port){
 
 
 });
+*/
 
 }
 
@@ -88,6 +89,11 @@ if($webSocketEnabled){
  * QUEUE SERVER
  */
 
+
+
+
+
+
 //Check the database for new jobs every 5 seconds:
 $loop->addPeriodicTimer(5, function () use ($jobs) {
     
@@ -104,5 +110,4 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 //Delete all jobs if necessary: (good for tests)
 //$jobs->deleteAllJobs();
 
-\writelog("Run");
 $loop->run();

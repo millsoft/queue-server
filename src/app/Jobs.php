@@ -195,7 +195,11 @@ class Jobs extends Queuer
 
         } else {
             //Execute the script synchronously.
-            $cmd = $job_worker_cmd;
+            \writelog("Executing Job synchronously");
+            //$cmd = $job_worker_cmd;
+            //print_r($job_worker_cmd);
+            $cmd_output = shell_exec($job_worker_cmd);
+
         }
 
         //\writelog($cmd);
