@@ -196,15 +196,10 @@ class Jobs extends Queuer
         } else {
             //Execute the script synchronously.
             \writelog("Executing Job synchronously");
-            //$cmd = $job_worker_cmd;
-            //print_r($job_worker_cmd);
             $cmd_output = shell_exec($job_worker_cmd);
 
         }
 
-        //\writelog($cmd);
-        //$cmd_output = shell_exec($cmd);
-        //\writelog($cmd_output);
     }
 
     /**
@@ -255,6 +250,54 @@ class Jobs extends Queuer
         ]);
 
         return $job_status;
+
+    }
+
+
+    /**
+     * Get a single or multiple jobs
+     * @param  mixed $job_id id of the job or the string of the status: waiting, working, done, failed.
+     * @return array
+     */
+    public function getJob($job_id){
+        
+        if(is_numeric($job_id)){
+            $jobs = $this->db->get("queue", "*", [
+                "id" => $job_id,
+            ]);
+        }else{
+            //Search by string
+            $statusMap = [
+                'waiting' => 0,
+                'working' => 1,
+                'done' => 3,
+                'failed' => 99,
+            ];
+
+            $workerStatus = isset($statusMap[$job_id]) ? $statusMap[$job_id] : null;
+            if($workerStatus === null){
+                //Not recognized string
+                return false;
+            }
+
+            $jobs = $this->db->select("queue", "*", [
+                "worker_status" => $workerStatus,
+                "ORDER" => [
+                    "time_added" => "DESC",
+                    "time_completed" => "ASC",
+                ]
+            ]);
+        }
+
+
+        //unserialize job:
+        if(!empty($jobs)){
+            foreach($jobs as &$job){
+                $job['job'] = json_decode($job['job'], true);
+            }
+        }
+
+        return $jobs;
 
     }
 }

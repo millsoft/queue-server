@@ -96,17 +96,29 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
 
 
 /**
+ * Get one or more jobs by id or by a search string:
+ * waiting, working, done, failed
+ */
+$app->get('/jobs/get/{id}', function (Request $request, Response $response, array $args) {
+
+    $jobs = $this->jobs->getJob($args['id']);
+
+    $jobsArray = [
+        'status'  => 200,
+        'data'  => $jobs,
+    ];
+
+    $newResponse = $response->withJson($jobsArray);
+    return $newResponse;
+});
+
+
+
+
+
+/**
  * MANAGEMENT CONSOLE
  */
-
-
-/*
-$app->get('/management', function (Request $request, Response $response) {
-    return $this->view->render($response, 'index.html', [
-        'name' => "cool"
-    ]);
-})->setName("management.dashboard");
-*/
 
 $app->get('/management', \Millsoft\Queuer\Management::class . ':dashboard')->setName("management.dashboard");
 
@@ -114,7 +126,4 @@ $app->get('/management', \Millsoft\Queuer\Management::class . ':dashboard')->set
 $app->get('/management/queue', function (Request $request, Response $response) {
     return $this->view->render($response, 'queue.html');
 })->setName("management.queue");
-
-
-
 

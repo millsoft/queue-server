@@ -2,21 +2,26 @@ var app = new Vue({
   el: '#app',
   delimiters: ['${', '}'],
   data: {
-    message: 'Hello Vue!',
     status: {},
     webSocket: null,
     jobStatusHash: null,
     jobStatusHashLast: null,
+    jobs: [],
   },
   methods: {
   	updateLogs: function(){
-  		console.log("Updating Status...");
   		var th = this;
 
 		$.getJSON('jobs/status', function(d){
 			th.status = d.data;
+		});
+  	},
 
-			//setTimeout(th.updateLogs, 3000);
+  	//Load all jobs with status "working"
+  	loadJobs: function(){
+  		var th = this;
+		$.getJSON('jobs/get/working', function(d){
+			th.jobs = d.data;
 		});
   	},
 
@@ -55,13 +60,20 @@ var app = new Vue({
 		}, 1000);
 
 
+  	},
+
+  	//Automatic status update
+  	autoUpdate: function(){
+	  	this.updateLogs();
+	  	this.loadJobs();
+	  	setTimeout(this.autoUpdate, 5000);
   	}
   },
   mounted: function(){
-  	this.updateLogs();
-  	this.initWebSocket();
 
+  	this.autoUpdate();
 
+  	//this.initWebSocket();
   }
 });
 

@@ -108,4 +108,29 @@
         </div>
     </div>
 </div>
+
+
+<div v-if="status.working">
+    <h3>Working on ${status.working} jobs</h3>
+    <table class="table table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Priority</th>
+                <th>Context</th>
+                <th>Added</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="job in jobs">
+                <td>${job.id}</td>
+                <td>${job.priority}</td>
+                <td>${job.context}</td>
+                <td>${job.time_added}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
