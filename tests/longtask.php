@@ -4,9 +4,14 @@
  * This is an example for a long taking task.
  */
 ob_start();
-echo "Long task started...";
 
-for ($a = 0; $a < 10 ; $a++){
+//How many seconds to wait?
+$seconds = isset($_REQUEST['seconds']) ? $_REQUEST['seconds'] : 10;
+
+echo "Long task started... This task will take $seconds seconds.";
+
+
+for ($a = 0; $a < $seconds ; $a++){
     echo "Read Line #" . $a . "\n";
     flush();
     sleep(1);

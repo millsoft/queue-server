@@ -12,3 +12,15 @@ function writelog($txt, $extra = null) {
 function isCli(){
 	return php_sapi_name() == "cli" ? true : false;
 }
+
+/**
+ * Get the app version from the .version file
+ */
+function getAppVersion(){
+    $versionFile = __DIR__ . "/../.version";
+    if(!file_exists($versionFile )){
+        return '';
+    }
+
+    return file_get_contents($versionFile);
+}

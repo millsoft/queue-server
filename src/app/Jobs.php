@@ -67,6 +67,9 @@ class Jobs extends Queuer
         ]);
 
         $this->updateStatusFile();
+
+        $this->pushData("update", ["status" => "add"]);
+
         return $this->db->id();
     }
 
@@ -92,6 +95,9 @@ class Jobs extends Queuer
         ], [
             "id" => $job['id'],
         ]);
+
+        //Push update notification to frontend
+        $this->pushData("update", ["status" => "started"]);
 
         $this->updateStatusFile();
         return $job;
@@ -259,7 +265,7 @@ class Jobs extends Queuer
      * @param  mixed $job_id id of the job or the string of the status: waiting, working, done, failed.
      * @return array
      */
-    public function getJob($job_id){
+    public function getJob($job_id, $params = []){
         
         if(is_numeric($job_id)){
             $jobs = $this->db->get("queue", "*", [
@@ -280,12 +286,15 @@ class Jobs extends Queuer
                 return false;
             }
 
+            $limit = isset($params['limit']) ? $params['limit'] : null;
+
             $jobs = $this->db->select("queue", "*", [
                 "worker_status" => $workerStatus,
                 "ORDER" => [
                     "time_added" => "DESC",
                     "time_completed" => "ASC",
-                ]
+                ],
+                "LIMIT" => $limit
             ]);
         }
 

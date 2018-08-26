@@ -86,6 +86,7 @@ class Worker extends Queuer {
 	//Work on the current job
 	private function work() {
 
+
 		//Set status to "2" after the task has been performed successfully
 		$status = 2;
 
@@ -164,6 +165,8 @@ class Worker extends Queuer {
 
 	    $this->returnData['status'] = $status;
 	    $this->addLog("DONE_STATUS=" . $status);
+
+	    $this->pushData("update", ["status" => "done"]);
 	}
 
     /**

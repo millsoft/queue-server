@@ -1,5 +1,9 @@
-//import _ from 'lodash';
+/**
+ * IMPORTS
+ */
 import Vue from 'vue';
+import Pusher from 'pusher-js';
+//import _ from 'lodash';
 
 
 var version = '0.1.0';
@@ -13,8 +17,9 @@ console.log(banner);
 
 
 //import QueueTableComponent from './vue/QueueTableComponent.vue';
-Vue.component('queue-table', require('./vue/QueueTableComponent.vue'));
-
+//Vue.component('queue-table', require('./vue/QueueTableComponent.vue').default );
+import QueueTableComponent from './vue/QueueTableComponent.vue'
+Vue.component('queue-table', QueueTableComponent);
 
 const app = new Vue({
   el: '#app',
@@ -22,6 +27,7 @@ const app = new Vue({
   data: {
     status: {},
     webSocket: null,
+    webSocketData: null,
     jobStatusHash: null,
     jobStatusHashLast: null,
     jobs: [],
@@ -35,21 +41,12 @@ const app = new Vue({
 		});
   	},
 
-  	//Load all jobs with status "working"
-  	loadJobs: function(){
-  		var th = this;
-		$.getJSON('jobs/get/working', function(d){
-			th.jobs = d.data;
-		});
-  	},
 
   	initWebSocket: function(){
-		this.webSocket = new WebSocket('ws://127.0.0.1:8080');
+		this.webSocket = new WebSocket('ws://localhost:8080/status');
 		var th = this;
 
 		this.webSocket.onopen = function () {
-		  console.log("websocket.onopen");
-		  //connection.send('Ping'); // Send the message 'Ping' to the server
 		  th.webSocket.send("status");
 		};
 
@@ -60,38 +57,54 @@ const app = new Vue({
 
 		// Log messages from the server
 		th.webSocket.onmessage = function (e) {
-			th.jobStatusHash = e.data;
+			console.log(e.data);
+			//th.jobStatusHash = e.data;
 
-			if(th.jobStatusHashLast != th.jobStatusHash){
-				//Something changed, update the stats!
-				th.updateLogs();
-				th.jobStatusHashLast = th.jobStatusHash;
+			try{
+                th.webSocketData = JSON.parse(e.data);
+			}catch(e){
+                th.webSocketData = e.data;
 			}
+
+            console.log(th.webSocketData);
+
+            //th.updateLogs();
+
+
+            /*
+            if(th.jobStatusHashLast != th.jobStatusHash){
+                //Something changed, update the stats!
+                th.jobStatusHashLast = th.jobStatusHash;
+            }
+            */
 
 
 		  	//console.log('Server: ' + e.data);
-		};
-
-
-		setInterval(function(){
-			th.webSocket.send("status");
-		}, 1000);
-
+        };
 
   	},
 
   	//Automatic status update
   	autoUpdate: function(){
 	  	this.updateLogs();
-	  	this.loadJobs();
-	  	setTimeout(this.autoUpdate, 5000);
+	  	//setTimeout(this.autoUpdate, 5000);
+  		this.initPusher();
+  	},
+
+  	initPusher: function(){
+  		var th = this;
+
+
+        //console.log(data.message);
+        //th.$emit("status_updated", data);
+
   	}
   },
   mounted: function(){
 
   	this.autoUpdate();
 
-  	//this.initWebSocket();
+  	this.initWebSocket();
   }
 });
 

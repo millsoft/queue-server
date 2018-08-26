@@ -113,6 +113,32 @@ $app->get('/jobs/get/{id}', function (Request $request, Response $response, arra
 });
 
 
+/**
+ * Get jobs via post.
+ * This route supports more params like limit
+ */
+$app->post('/jobs/get', function (Request $request, Response $response, array $args) {
+
+    $job_id = $request->getParam("id");
+    $limit = $request->getParam("limit", 10);
+
+    $jobs = $this->jobs->getJob($job_id, [
+        "limit" => $limit
+    ]);
+
+    $jobsArray = [
+        'status'  => 200,
+        'data'  => $jobs,
+    ];
+
+    $newResponse = $response->withJson($jobsArray);
+    return $newResponse;
+});
+
+
+
+
+
 
 
 

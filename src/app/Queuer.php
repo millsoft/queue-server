@@ -10,6 +10,7 @@ class Queuer {
 	public $config = null;
 	public $db = null;
 	private $statusFile = __DIR__ . "/../../.statusfile";
+	protected $webSocketHandler = null;
 
 	public function __construct() {
 		$this->init();
@@ -36,16 +37,6 @@ class Queuer {
 				'charset' => 'utf8',
 				'port' => isset($this->config->db["port"]) ? $this->config->db["port"] : 3306,
 
-				// [optional] Table prefix
-				//'prefix' => 'PREFIX_',
-
-				// [optional] Enable logging (Logging is disabled by default for better performance)
-				//'logging' => true,
-
-				// [optional] MySQL socket (shouldn't be used with server and port)
-				//'socket' => '/tmp/mysql.sock',
-
-				// [optional] driver_option for connection, read more from http://www.php.net/manual/en/pdo.setattribute.php
 				'option' => [
 					\PDO::ATTR_CASE => \PDO::CASE_NATURAL,
 				],
@@ -107,8 +98,36 @@ class Queuer {
     	$ti = filemtime($this->statusFile);
     	$ti = date("H:i:s", $ti);
     	return $ti;
+    }
 
+    public function setWebsocketHandler($handler){
+        \writelog("Setting Websocket Connection");
+        $this->webSocketHandler = $handler;
+    }
 
+    /**
+     * Push data to pusher (used for the Management console)
+     * @param  string $event name of the event
+     * @param  array  $data  optional additional data that will also be pushed
+     * @return mixed
+     */
+    public function pushData($event, $data = []){
+        if($this->webSocketHandler === null || $this->webSocketHandler->connection === null){
+              return false;
+        }
+
+        $dataToSend = [
+            'event' => $event
+        ];
+
+        if(!empty($data)){
+            $dataToSend['data'] = $data;
+        }
+
+        $dataToSend = json_encode($dataToSend);
+
+        $re = $this->webSocketHandler->connection->write($dataToSend);
+        return $re;
     }
 
 }

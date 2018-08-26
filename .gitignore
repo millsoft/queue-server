@@ -7,3 +7,4 @@ start_server.sh
 .stop_server
 node_modules
 .statusfile
+yarn-error.log

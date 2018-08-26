@@ -2,14 +2,18 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 //const VueLoaderPlugin = require('../lib/plugin')
-const VueLoaderPlugin = require('vue-loader')
+const VueLoaderPlugin = require('vue-loader');
 
 
-module.exports = {
-  entry: { main: './src/js/app.js' },
+module.exports = (env = {})  => {
+
+  return {
+  entry: [ './src/js/app.js'],
   output: {
     path: path.resolve(__dirname, '../../dist/js'),
-    filename: 'queueapp.js'
+    filename: 'queueapp.js',
+    publicPath: ""
+
   },
 
     resolve: {
@@ -42,5 +46,6 @@ module.exports = {
       }
     ]
   }
+}
 
 };
