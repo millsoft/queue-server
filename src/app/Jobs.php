@@ -17,6 +17,10 @@ class Jobs extends Queuer
     //max threads - this will be set by the config file
     private $maxThreads = null;
 
+    //a hash for the counts of the job counts
+    //If the hash changes (eg. a job gets done) it will be pushed to the management console
+    private $jobStatusHash = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -41,6 +45,7 @@ class Jobs extends Queuer
 
         $this->jobStatus = $re;
 
+        \writelog(json_encode($re));
         return $re;
     }
 
@@ -66,10 +71,10 @@ class Jobs extends Queuer
             "job" => json_encode($job),
         ]);
 
+        $this->pushStatus();
+
         $this->updateStatusFile();
-
-        $this->pushData("update", ["status" => "add"]);
-
+        //$this->pushData("update", ["status" => "add"]);
         return $this->db->id();
     }
 
@@ -97,7 +102,7 @@ class Jobs extends Queuer
         ]);
 
         //Push update notification to frontend
-        $this->pushData("update", ["status" => "started"]);
+        //$this->pushData("update", ["status" => "started"]);
 
         $this->updateStatusFile();
         return $job;
@@ -133,6 +138,7 @@ class Jobs extends Queuer
     public function checkJobs()
     {
         $jobs_count = $this->getJobsCount();
+        $this->pushStatus($jobs_count);
 
         if (!$jobs_count['waiting']) {
             return false;
@@ -141,9 +147,9 @@ class Jobs extends Queuer
         while ($jobs_count['waiting']) {
 
             $this->printJobStatus();
-            
+
             //Dispatch jobs
-            if ($jobs_count['waiting'] > 0 && ($jobs_count['working'] < $this->maxThreads) ) {
+            if ($jobs_count['waiting'] > 0 && ($jobs_count['working'] <= $this->maxThreads) ) {
                 //Dispatch new job to worker
                 \writelog("Getting a job from queue");
                 
@@ -154,7 +160,9 @@ class Jobs extends Queuer
 
                 //$worker = new Worker($job);
                 $this->dispatchJob($job);
-                //\writelog("job dispatched");
+
+
+                $this->pushStatus( );
 
                 sleep(0.2);
             } else {
@@ -164,7 +172,7 @@ class Jobs extends Queuer
 
             $jobs_count = $this->getJobsCount();
         }
-
+        $this->pushStatus($jobs_count);
         \writelog("Queue done. Going to watch mode");
 
 
@@ -308,5 +316,28 @@ class Jobs extends Queuer
 
         return $jobs;
 
+    }
+
+    /**
+     * Push the current job status to websocket
+     * @param $jobStatus
+     * @return bool
+     */
+    public function pushStatus($jobStatus = null){
+
+        if($jobStatus === null ){
+            $jobStatus = $this->getJobsCount();
+        }
+
+        $newJobStatusHash = md5(json_encode($jobStatus));
+
+        if($newJobStatusHash == $this->jobStatusHash){
+            //Do not push anything because the status didn't change
+            return false;
+        }
+
+        $this->pushData("update", $jobStatus);
+        $this->jobStatusHash = $newJobStatusHash;
+        return true;
     }
 }

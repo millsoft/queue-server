@@ -19,92 +19,88 @@ console.log(banner);
 //import QueueTableComponent from './vue/QueueTableComponent.vue';
 //Vue.component('queue-table', require('./vue/QueueTableComponent.vue').default );
 import QueueTableComponent from './vue/QueueTableComponent.vue'
+
 Vue.component('queue-table', QueueTableComponent);
 
 const app = new Vue({
-  el: '#app',
-  delimiters: ['${', '}'],
-  data: {
-    status: {},
-    webSocket: null,
-    webSocketData: null,
-    jobStatusHash: null,
-    jobStatusHashLast: null,
-    jobs: [],
-  },
-  methods: {
-  	updateLogs: function(){
-  		var th = this;
+    el: '#app',
+    delimiters: ['${', '}'],
+    data: {
+        status: {},
+        webSocket: null,
+        webSocketData: null,
+        jobStatusHash: null,
+        jobStatusHashLast: null,
+        jobs: [],
+    },
 
-		$.getJSON('jobs/status', function(d){
-			th.status = d.data;
-		});
-  	},
+    methods: {
+        updateLogs: function () {
+            var th = this;
 
-
-  	initWebSocket: function(){
-		this.webSocket = new WebSocket('ws://localhost:8080/status');
-		var th = this;
-
-		this.webSocket.onopen = function () {
-		  th.webSocket.send("status");
-		};
-
-		// Log errors
-		th.webSocket.onerror = function (error) {
-		  console.log('WebSocket Error ' + error);
-		};
-
-		// Log messages from the server
-		th.webSocket.onmessage = function (e) {
-			console.log(e.data);
-			//th.jobStatusHash = e.data;
-
-			try{
-                th.webSocketData = JSON.parse(e.data);
-			}catch(e){
-                th.webSocketData = e.data;
-			}
-
-            console.log(th.webSocketData);
-
-            //th.updateLogs();
+            $.getJSON('jobs/status', function (d) {
+                th.status = d.data;
+            });
+        },
 
 
-            /*
-            if(th.jobStatusHashLast != th.jobStatusHash){
-                //Something changed, update the stats!
-                th.jobStatusHashLast = th.jobStatusHash;
+        initWebSocket: function () {
+            var th = this;
+
+            try {
+                this.webSocket = new WebSocket('ws://localhost:8080/status');
+
+                this.webSocket.onopen = function () {
+                    th.webSocket.send("status");
+                };
+
+                // Log errors
+                th.webSocket.onerror = function (error) {
+                    console.log('WebSocket Error ' + error);
+                };
+
+                // Log messages from the server
+                th.webSocket.onmessage = function (e) {
+                    try {
+                        th.webSocketData = JSON.parse(e.data);
+
+                        if(th.webSocketData.event == 'update'){
+                            th.status = th.webSocketData.data;
+                        }
+
+                    } catch (e) {
+                        th.webSocketData = e.data;
+                    }
+
+                };
+
+            } catch (e) {
+                console.log(e);
             }
-            */
+
+        },
+
+        //Automatic status update
+        autoUpdate: function () {
+            this.updateLogs();
+            //setTimeout(this.autoUpdate, 5000);
+            this.initPusher();
+        },
+
+        initPusher: function () {
+            var th = this;
 
 
-		  	//console.log('Server: ' + e.data);
-        };
+            //console.log(data.message);
+            //th.$emit("status_updated", data);
 
-  	},
+        }
+    },
+    mounted: function () {
 
-  	//Automatic status update
-  	autoUpdate: function(){
-	  	this.updateLogs();
-	  	//setTimeout(this.autoUpdate, 5000);
-  		this.initPusher();
-  	},
+        this.autoUpdate();
 
-  	initPusher: function(){
-  		var th = this;
-
-
-        //console.log(data.message);
-        //th.$emit("status_updated", data);
-
-  	}
-  },
-  mounted: function(){
-
-  	this.autoUpdate();
-
-  	this.initWebSocket();
-  }
+        this.initWebSocket();
+    }
 });
 

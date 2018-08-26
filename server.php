@@ -25,20 +25,16 @@ $webSocketEnabled = isset($jobs->config->webSocket) && $jobs->config->webSocket 
 $loop = \React\EventLoop\Factory::create();
 
 
-
 /**
  * WEBSOCKET SERVER
  */
-
 if($webSocketEnabled){
     \writelog("Starting WebSocket Server in port " . $port);
     $server = new WebSocketServer($port);
     $webSocketHandler = new WebSocketHandler();
     $server->setMessageHandler($webSocketHandler, '/status');
-    //$jobs->setWebsocketConnection($webSocketHandler->connection);
     $jobs->setWebsocketHandler($webSocketHandler);
 
-    $wsConnection = $webSocketHandler->connection;
 }
 
 
@@ -46,22 +42,16 @@ if($webSocketEnabled){
  * QUEUE SERVER
  */
 //Check the database for new jobs every 5 seconds:
-$loop->addPeriodicTimer(5, function () use ($jobs, $webSocketHandler) {
-
-    /*
-    if($webSocketHandler !== null && $webSocketHandler->connection !== null){
-        $webSocketHandler->connection->write("NXNNXNXN");
-    }
-    */
+$loop->addPeriodicTimer(5, function () use ($jobs) {
 
     //Stop the server by a file (we need a better solution, OK for now)
     $stop_file = __DIR__ . '/.stop_server';
     if(file_exists($stop_file)){
         unlink($stop_file);
-        die("Server was stopped by the .stop_server file\n");
+        \writelog("Server was stopped by the .stop_server file");
+        die();
     }
 
-    //$jobs->pushData("HELLO");
     $jobs->checkJobs();
 });
 
