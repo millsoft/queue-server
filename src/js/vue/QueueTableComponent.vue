@@ -2,9 +2,10 @@
 <div>
 
 
-    <table v-if="jobs.length" class="table table">
+    <table v-if="jobs.length" class="table table-hover head-dark">
         <thead>
             <tr>
+                <th></th>
                 <th>ID</th>
                 <th>Priority</th>
                 <th>Context</th>
@@ -12,9 +13,14 @@
                 <th>Added</th>
             </tr>
         </thead>
-
         <tbody>
             <tr v-for="job in jobs">
+                <td class="icons">
+                    <div v-if="job.worker_status == 0"><i class="ti-time"></i></div>
+                    <div v-if="job.worker_status == 1" class="icon working"></div>
+                    <div v-if="job.worker_status == 3"><i class="ti-check green"></i></div>
+                    <div v-if="job.worker_status == 99"><i class="ti-close red"></i></div>
+                </td>
                 <td>{{job.id}}</td>
                 <td>{{job.priority}}</td>
                 <td>{{job.context}}</td>
@@ -50,14 +56,23 @@
         methods: {
             loadJobs: function(){
                 var th = this;
-                var params = {
-                    id: this.jobid,
-                    limit: this.config.limit,
-                };
 
-                $.post('jobs/get', params , function(d){
-                    th.jobs = d.data;
-                }, 'json');
+
+                if(this.jobid == 'summary'){
+                    $.getJSON('jobs/get/summary', function(d){
+                        th.jobs = d.data.jobs;
+                    });
+                }else{
+                    var params = {
+                        id: this.jobid,
+                        limit: this.config.limit,
+                    };
+
+                    $.post('jobs/get', params , function(d){
+                        th.jobs = d.data;
+                    }, 'json');
+                }
+
             },
 
             //Auto reload for data
@@ -75,6 +90,9 @@
             },
 
         mounted() {
+
+            var th = this;
+
             //Load the configuration from props
             this.loadConfig();
 
@@ -83,6 +101,10 @@
 
             //Start the autoupdater
             this.autoUpdate();
+
+            this.$root.$on("status_updated", function(data){
+                th.loadJobs();
+            });
         }
     }
 </script>

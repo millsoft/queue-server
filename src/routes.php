@@ -7,7 +7,7 @@ $app->get('/', function (Request $request, Response $response, array $args) {
     $this->logger->addInfo("Opened Index page");
 
     $newResponse = $response->withJson([
-        "version" => "0.1.0",
+        "version" => getAppVersion() ,
         "status" => "running",
     ]);
 
@@ -18,11 +18,8 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 //Stop the server
 $app->get('/server/stop', function (Request $request, Response $response) {
     $this->logger->addInfo("Stopping the server");
-
     $stop_file = __DIR__ . '/.stop_server';
     touch($stop_file);
-
-    return $newResponse;
 });
 
 
@@ -95,6 +92,28 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
 });
 
 
+$app->get('/jobs/get/summary', function (Request $request, Response $response, array $args) {
+
+    $jobs = $this->jobs->getJob('all', [
+        "limit" => 5
+    ]);
+
+    $counts = $this->jobs->getJobsCount();
+
+    $jobsArray = [
+        'status'  => 200,
+        'data'  => [
+            "jobs" => $jobs,
+            "counts" => $counts,
+        ],
+    ];
+
+    $newResponse = $response->withJson($jobsArray);
+    return $newResponse;
+});
+
+
+
 /**
  * Get one or more jobs by id or by a search string:
  * waiting, working, done, failed
@@ -139,15 +158,11 @@ $app->post('/jobs/get', function (Request $request, Response $response, array $a
 
 
 
-
-
-
 /**
  * MANAGEMENT CONSOLE
  */
 
 $app->get('/management', \Millsoft\Queuer\Management::class . ':dashboard')->setName("management.dashboard");
-
 
 $app->get('/management/queue', function (Request $request, Response $response) {
     return $this->view->render($response, 'queue.html');

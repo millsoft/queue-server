@@ -3,8 +3,6 @@
  */
 import Vue from 'vue';
 import Pusher from 'pusher-js';
-//import _ from 'lodash';
-
 
 var version = '0.1.0';
 var banner = `
@@ -15,9 +13,6 @@ QUEUE SERVER V${version}
 
 console.log(banner);
 
-
-//import QueueTableComponent from './vue/QueueTableComponent.vue';
-//Vue.component('queue-table', require('./vue/QueueTableComponent.vue').default );
 import QueueTableComponent from './vue/QueueTableComponent.vue'
 
 Vue.component('queue-table', QueueTableComponent);
@@ -47,8 +42,13 @@ const app = new Vue({
         initWebSocket: function () {
             var th = this;
 
+            if(typeof WEBSOCKET_URL === "undefined" || WEBSOCKET_URL.length == 0){
+                //websocket is not for this installation enabled
+                return false;
+            }
+
             try {
-                this.webSocket = new WebSocket('ws://localhost:8080/status');
+                this.webSocket = new WebSocket(WEBSOCKET_URL + '/status');
 
                 this.webSocket.onopen = function () {
                     th.webSocket.send("status");
@@ -66,11 +66,13 @@ const app = new Vue({
 
                         if(th.webSocketData.event == 'update'){
                             th.status = th.webSocketData.data;
+                            th.$root.$emit("status_updated");
                         }
 
                     } catch (e) {
                         th.webSocketData = e.data;
                     }
+
 
                 };
 
@@ -80,26 +82,9 @@ const app = new Vue({
 
         },
 
-        //Automatic status update
-        autoUpdate: function () {
-            this.updateLogs();
-            //setTimeout(this.autoUpdate, 5000);
-            this.initPusher();
-        },
-
-        initPusher: function () {
-            var th = this;
-
-
-            //console.log(data.message);
-            //th.$emit("status_updated", data);
-
-        }
     },
     mounted: function () {
-
-        this.autoUpdate();
-
+        this.updateLogs();
         this.initWebSocket();
     }
 });

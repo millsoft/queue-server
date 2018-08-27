@@ -274,7 +274,9 @@ class Jobs extends Queuer
      * @return array
      */
     public function getJob($job_id, $params = []){
-        
+
+        $limit = isset($params['limit']) ? $params['limit'] : null;
+
         if(is_numeric($job_id)){
             $jobs = $this->db->get("queue", "*", [
                 "id" => $job_id,
@@ -288,22 +290,31 @@ class Jobs extends Queuer
                 'failed' => 99,
             ];
 
-            $workerStatus = isset($statusMap[$job_id]) ? $statusMap[$job_id] : null;
-            if($workerStatus === null){
-                //Not recognized string
-                return false;
-            }
-
-            $limit = isset($params['limit']) ? $params['limit'] : null;
-
-            $jobs = $this->db->select("queue", "*", [
-                "worker_status" => $workerStatus,
+            $queryParams = [
                 "ORDER" => [
                     "time_added" => "DESC",
                     "time_completed" => "ASC",
                 ],
                 "LIMIT" => $limit
-            ]);
+            ];
+
+            if($job_id == 'all'){
+                //Get all jobs
+
+            }else{
+                //get jobs with specific status
+                $workerStatus = isset($statusMap[$job_id]) ? $statusMap[$job_id] : null;
+
+                if($workerStatus === null){
+                    //Not recognized string
+                    return false;
+                }
+
+                $queryParams['worker_status'] = $workerStatus;
+
+            }
+
+            $jobs = $this->db->select("queue", "*", $queryParams);
         }
 
 

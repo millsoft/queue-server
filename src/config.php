@@ -42,13 +42,10 @@ class GlobalConfig {
 
 	public $workerScript = __DIR__ . '/../work.php';
 
-	public $displayErrorDetails = true;
 
-	public $addContentLengthHeader = false;
-
-
-	//Run the web controller server
-    //Web Controller is server.php but also with the possibility to directly communicate with it over web
+    /**
+     * MANAGEMENT CONSOLE CONFIGURATION
+     */
 	public $webSocket = false;
 	public $webSocketPort = 8080;
 	public $webSocketServer = "localhost";
