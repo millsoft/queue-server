@@ -11,6 +11,7 @@
                 <th>Context</th>
                 <th>Output</th>
                 <th>Added</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +27,9 @@
                 <td>{{job.context}}</td>
                 <td>{{job.output}}</td>
                 <td>{{job.time_added}}</td>
+                <td>
+                    <a class="btn btn-default" @click.prevent="openJob(job)">open</a>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -73,6 +77,17 @@
                     }, 'json');
                 }
 
+            },
+
+            /**
+             * Open job in modal
+             * @param job
+             */
+            openJob(job){
+                console.log("opening modal");
+                this.$root.$emit("job_modal_open", {
+                    job: job
+                });
             },
 
             //Auto reload for data

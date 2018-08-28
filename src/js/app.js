@@ -13,9 +13,12 @@ QUEUE SERVER V${version}
 
 console.log(banner);
 
-import QueueTableComponent from './vue/QueueTableComponent.vue'
+import QueueTableComponent from './vue/QueueTableComponent.vue';
+import QueueModalComponent from './vue/QueueTableComponent';
+
 
 Vue.component('queue-table', QueueTableComponent);
+Vue.component('queue-modal', QueueModalComponent);
 
 const app = new Vue({
     el: '#app',
