@@ -2,7 +2,6 @@
  * IMPORTS
  */
 import Vue from 'vue';
-import Pusher from 'pusher-js';
 
 var version = '0.1.0';
 var banner = `
@@ -14,7 +13,7 @@ QUEUE SERVER V${version}
 console.log(banner);
 
 import QueueTableComponent from './vue/QueueTableComponent.vue';
-import QueueModalComponent from './vue/QueueTableComponent';
+import QueueModalComponent from './vue/QueueModalComponent.vue';
 
 
 Vue.component('queue-table', QueueTableComponent);

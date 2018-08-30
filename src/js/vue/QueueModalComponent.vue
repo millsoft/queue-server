@@ -7,23 +7,59 @@
 <template>
 <div>
 
-    <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Modal title</h4>
+    <transition name="modal" v-if="showModal">
+        <div class="modal-mask">
+            <div class="modal-wrapper" @click.stop.capture="closeModal()">
+                <div class="modal-container">
+
+                    <div class="modal-header">
+                        <slot name="header">
+                            Job {{ job.id }} - {{job.context}}
+                        </slot>
+                    </div>
+
+                    <div class="modal-body">
+                        <slot name="body">
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="">Priority:</label> {{ job.priority }}
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="">Added</label> {{ job.time_added }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="">Completed</label> {{ job.time_completed }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="">Status:</label> {{ job.worker_status }}
+                                </div>
+                            </div>
+
+
+
+                            <h3>Output</h3>
+                            <div class="output">
+                                {{job.output}}
+                            </div>
+                        </slot>
+                    </div>
+
+                    <div class="modal-footer">
+                        <slot name="footer">
+                            <button class="btn btn-primary modal-default-button" @click="closeModal()">
+                                OK
+                            </button>
+                        </slot>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <p>One fine body&hellip;</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+        </div>
+    </transition>
 
 </div>
 </template>
@@ -32,18 +68,28 @@
     export default {
         data () {
             return {
-                job: {},
+                job: {
+                    output: "NONE"
+                },
+                showModal: false
             }
         },
         methods: {
+                closeModal() {
+                    this.showModal = false;
+                }
             },
 
         mounted() {
 
+            var th = this;
             this.$root.$on("job_modal_open", function(data){
-                //th.loadJobs();
-                console.log("Hello from job modal!");
+                th.job = data.job;
+                th.showModal = true;
+
             });
+
+
         }
     }
 </script>

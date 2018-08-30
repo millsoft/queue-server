@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bootstrap": "3.3.7",
     "lodash": "^4.17.10",
     "vue": "^2.5.17"
   },
@@ -11,13 +12,19 @@
   "author": "Michael Milawski <mm@millsoft.de>",
   "license": "MIT",
   "devDependencies": {
+    "autoprefixer": "^7.1.2",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
+    "css-flip": "^0.5.0",
     "css-loader": "^1.0.0",
-    "extract-text-webpack-plugin": "^3.0.2",
+    "csso-cli": "^1.0.0",
     "extract-loader": "^1.0.1",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^0.11.2",
     "node-sass": "^4.9.3",
+    "postcss-cli": "^4.1.0",
+    "postcss-loader": "^2.0.6",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.22.1",
     "vue-hot-reload-api": "^2.3.0",
@@ -25,13 +32,7 @@
     "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.17.1",
-    "webpack-cli": "^3.1.0",
-    "file-loader": "^0.11.2",
-    "postcss-cli": "^4.1.0",
-    "postcss-loader": "^2.0.6",
-    "autoprefixer": "^7.1.2",
-    "css-flip": "^0.5.0",
-    "csso-cli": "^1.0.0"
+    "webpack-cli": "^3.1.0"
   },
   "scripts": {
     "dev": "webpack --config src/js/webpack.config.js --mode development --watch --watch-poll",

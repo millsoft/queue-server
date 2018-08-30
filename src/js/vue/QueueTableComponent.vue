@@ -1,7 +1,6 @@
 <template>
 <div>
 
-
     <table v-if="jobs.length" class="table table-hover head-dark">
         <thead>
             <tr>
@@ -36,6 +35,8 @@
     <div v-else>
         No Jobs
     </div>
+
+    <queue-modal jobid="1"></queue-modal>
 
 
 </div>
