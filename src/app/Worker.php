@@ -130,6 +130,7 @@ class Worker extends Queuer {
             $this->addLog("starting...");
 
             $W = new $workerClass();
+            $W->caller = $this;
 			$W->job_id = $this->job['id'];
 
 			$re = $W->work($cmd);
@@ -146,7 +147,7 @@ class Worker extends Queuer {
 
 	//Set the job status to "done"
 	//2 = OK, 99 = Failed
-	private function setJobDone($status = 2, $output = null) {
+	public function setJobDone($status = 2, $output = null) {
 
 	    if(is_array($output)){
 	        $output = json_encode($output);

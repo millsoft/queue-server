@@ -11,15 +11,15 @@ use GuzzleHttp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
-class HttpWorker implements iWorker {
+class HttpWorker  implements iWorker {
 
     public $job_id = null;
+    public $caller = null;
 
 		//Execute a HTTP task
 	public function work($cmd) {
 
 		echo "Doing HTTP to " . $cmd['url'] . "\n";
-
 		//Store return data here temporary:
 		$return = [];
 
@@ -35,6 +35,9 @@ class HttpWorker implements iWorker {
 		if (isset($cmd['params'])) {
 			$params['form_params'] = $cmd['params'];
 		}
+        $useStream = true;
+
+        $params['stream'] = $useStream;
 
 		try {
 
@@ -44,7 +47,30 @@ class HttpWorker implements iWorker {
 		    $url = $this->parseRequestParams($url);
 
 			$response = $client->request($method, $url , $params);
-            $body = $response->getBody();
+
+            if($useStream) {
+                $body = $response->getBody();
+                $resp = '';
+                $time_start = microtime(true);
+
+                while (!$body->eof()) {
+                    $resp .= $body->read(1024);
+                    $time_end = microtime(true);
+                    $time = $time_end - $time_start;
+
+                    if ($time > 0.5) {
+                        //TODO: 1 second passed between stream reader. Update the output to the database:
+                        //$this->caller->setJobDone(2, $resp);
+                    \writelogProgress("Received " . strlen($resp) . " bytes");
+
+                    //Reset the timer:
+                        $time_start = microtime(true);
+                    }
+
+                }
+            }
+
+            \writelog("\n");
 
 		} catch (\GuzzleHttp\Exception\RequestException $e) {
 
@@ -56,13 +82,13 @@ class HttpWorker implements iWorker {
 			return false;
 		}
 
-		if (isset($response) && $response !== null) {
-            $body = (string) $response->getBody();
+		//if (isset($response) && $response !== null) {
+            //$body = (string) $response->getBody();
+        //echo $resp;
+        //Output the http request
+            $return = $resp;
 
-            //Output the http request
-            echo $body;
-            $return = $body;
-		}
+        //}
 
 		\writelog("HTTP done");
 		

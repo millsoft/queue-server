@@ -43,9 +43,7 @@
 
 
                             <h3>Output</h3>
-                            <div class="output">
-                                {{job.output}}
-                            </div>
+                            <div class="output">{{job.output}}</div>
                         </slot>
                     </div>
 
