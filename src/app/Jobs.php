@@ -45,7 +45,6 @@ class Jobs extends Queuer
 
         $this->jobStatus = $re;
 
-        \writelog(json_encode($re));
         return $re;
     }
 
@@ -182,6 +181,7 @@ class Jobs extends Queuer
     //Dispatch a job to a worker abd execute the worker in the background
     public function dispatchJob($job)
     {
+        
         $last_worker_id = 0;
         //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
         $logfile = __DIR__ . "/../../logs/job_" . $job['id'] . ".log";

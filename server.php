@@ -52,6 +52,7 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
         die();
     }
 
+
     $jobs->checkJobs();
 });
 
@@ -63,6 +64,8 @@ $loop->addPeriodicTimer(5, function () use ($jobs) {
 
 if($webSocketEnabled){
     $server->setLoop($loop);
+    \writelog("websocket version started");
+
     $server->start();
 }else{
     $loop->run();
