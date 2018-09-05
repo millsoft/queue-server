@@ -30,7 +30,7 @@ $loop = \React\EventLoop\Factory::create();
  */
 if($webSocketEnabled){
     \writelog("Starting WebSocket Server in port " . $port);
-    $server = new WebSocketServer($port);
+    $server = new WebSocketServer($port, '0.0.0.0');
     $webSocketHandler = new WebSocketHandler();
     $server->setMessageHandler($webSocketHandler, '/status');
     $jobs->setWebsocketHandler($webSocketHandler);
