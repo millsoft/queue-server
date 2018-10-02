@@ -16,6 +16,13 @@ echo "*******************************************\n";
 echo "* Queue Server {$version} by MilMike *\n";
 echo "*******************************************\n";
 
+
+
+
+
+
+
+
 $jobs = new Jobs();
 
 //Here are the configs from your config file, if you need them somewhere:
@@ -24,9 +31,8 @@ $port = isset($jobs->config->webSocketPort) ? $jobs->config->webSocketPort : 133
 $webSocketEnabled = isset($jobs->config->webSocket) && $jobs->config->webSocket ? true : false;
 $loop = \React\EventLoop\Factory::create();
 
-
 /**
- * WEBSOCKET SERVER
+ * WEBSOCKET SERVER!
  */
 if($webSocketEnabled){
     \writelog("Starting WebSocket Server in port " . $port);
@@ -36,7 +42,6 @@ if($webSocketEnabled){
     $jobs->setWebsocketHandler($webSocketHandler);
 
 }
-
 
 /**
  * QUEUE SERVER

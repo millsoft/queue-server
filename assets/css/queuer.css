@@ -119,3 +119,7 @@ MODAL
     transform: scale(1.1);
 }
 
+.table-queue td{
+    vertical-align: top !important;
+}
+

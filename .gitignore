@@ -8,3 +8,4 @@ start_server.sh
 node_modules
 .statusfile
 yarn-error.log
+.phpcomplete_extended

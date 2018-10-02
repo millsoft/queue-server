@@ -1,7 +1,7 @@
 <template>
 <div>
 
-    <table v-if="jobs.length" class="table table-hover head-dark">
+    <table v-if="jobs.length" class="table table-hover head-dark table-queue">
         <thead>
             <tr>
                 <th></th>
@@ -24,7 +24,7 @@
                 <td>{{job.id}}</td>
                 <td>{{job.priority}}</td>
                 <td>{{job.context}}</td>
-                <td>{{job.output}}</td>
+                <td>{{ getSubstring(job.output) }}</td>
                 <td>{{job.time_added}}</td>
                 <td>
                     <a class="btn btn-default" @click.prevent="openJob(job)">open</a>
@@ -101,6 +101,15 @@
             loadConfig(){
                 this.config.limit = this.limit || this.config.limit;
                 this.config.autoupdate = this.autoupdate || this.config.autoupdate;
+            },
+
+            getSubstring(str){
+                var max_len = 80;
+                if(str.length > max_len){
+                    return str.substr(0,max_len) + "...";
+                }else{
+                    return str;
+                }
             }
 
             },
