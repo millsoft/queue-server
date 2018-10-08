@@ -92,10 +92,12 @@ $app->get('/jobs/status', function (Request $request, Response $response) {
 });
 
 
-$app->get('/jobs/get/summary', function (Request $request, Response $response, array $args) {
+$app->post('/jobs/get/summary', function (Request $request, Response $response, array $args) {
+
+    $limit = $request->getParam("count", 5);
 
     $jobs = $this->jobs->getJob('all', [
-        "limit" => 5
+        "limit" => $limit
     ]);
 
     $counts = $this->jobs->getJobsCount();

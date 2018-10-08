@@ -123,3 +123,6 @@ MODAL
     vertical-align: top !important;
 }
 
+div.content-main{
+    background-color: white;
+}

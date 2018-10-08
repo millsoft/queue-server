@@ -64,9 +64,13 @@
 
 
                 if(this.jobid == 'summary'){
-                    $.getJSON('jobs/get/summary', function(d){
+                    var params = {
+                        count : this.config.limit
+                    };
+
+                    $.post('jobs/get/summary', params, function(d){
                         th.jobs = d.data.jobs;
-                    });
+                    }, "json");
                 }else{
                     var params = {
                         id: this.jobid,
