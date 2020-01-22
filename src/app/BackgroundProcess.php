@@ -22,7 +22,6 @@ class BackgroundProcess{
         if(!empty($cmd))
         {
             $this->command=$cmd;
-            $this->do_process();
         }
         else{
             $this->msg['error']="Please Provide the Command Here";
@@ -69,6 +68,7 @@ class BackgroundProcess{
     //do the process in background
     public function do_process(){
         $command = 'nohup '.$this->command.' > /dev/null 2>&1 & echo $!';
+        \writelog("do_process: $command");
         exec($command ,$pross);
         $this->pid = (int)$pross[0];
     }

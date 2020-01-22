@@ -1,0 +1,37 @@
+version: "3.5"
+
+networks:
+  dbnet:
+    external: true
+    name: dbnet
+
+services:
+  queue-web:
+    image: webdevops/php-apache:7.3
+    volumes:
+    - ./:/app/
+    ports:
+    - "8999:80"
+    environment:
+      VIRTUAL_HOST: queue.mike
+      PHP_OPCACHE_MEMORY_CONSUMPTION: 192
+      PHP_OPCACHE_MAX_ACCELERATED_FILES: 10000
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+      PHP_OPCACHE_REVALIDATE_FREQ: 0
+      PHP_OPCACHE_INTERNED_STRINGS_BUFFER: 16
+    stdin_open: true
+    tty: true
+    networks:
+      - dbnet
+
+  queue-server:
+    image: webdevops/php-apache:7.3
+    command: php /app/server.php
+    volumes:
+    - ./:/app/
+    environment:
+      PHP_OPCACHE_MEMORY_CONSUMPTION: 192
+    stdin_open: true
+    tty: true
+    networks:
+      - dbnet

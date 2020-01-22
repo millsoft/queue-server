@@ -19,6 +19,9 @@ class HttpWorker  implements iWorker {
 		//Execute a HTTP task
 	public function work($cmd) {
 
+	    \writelog("http worker started");
+
+
 		echo "Doing HTTP to " . $cmd['url'] . "\n";
 		//Store return data here temporary:
 		$return = [];
@@ -43,6 +46,7 @@ class HttpWorker  implements iWorker {
 
 		    $url = $cmd['url'];
 
+		    \writelog("Calling webhook: $url");
             //Replace placeholders with actual values:
 		    $url = $this->parseRequestParams($url);
 

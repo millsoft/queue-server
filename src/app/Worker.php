@@ -36,6 +36,7 @@ class Worker extends Queuer {
      * @return array - data with various logs and info about the execution process
      */
 	public function loadJob($job_id) {
+		$job_id = (int) $job_id;
 		$this->job = $this->db->get("queue", "*", [
 			"id" => $job_id,
 		]);
@@ -91,6 +92,7 @@ class Worker extends Queuer {
 		$status = 2;
 
 		$re = $this->workOn("command");
+
 		$this->returnData["output"] = $re;
 
 		//Execute callback (if available)
@@ -114,9 +116,13 @@ class Worker extends Queuer {
      * @return bool - false if failed, array on success
      */
 	private function workOn($type) {
+
 		if (!isset($this->jobData[$type])) {
+        	$this->addLog("job type was not specified");
 			return false;
 		}
+
+        $this->addLog("workOn: " . $type);
 
 		//set default return value
 		$re = false;
@@ -124,7 +130,6 @@ class Worker extends Queuer {
 		$cmd = $this->jobData[$type];
 		$workerClass = '\\Millsoft\\Queuer\\Workers\\' . ucfirst($cmd['type']) . 'Worker';
 
-        $this->addLog("workOn: " . $type);
 
         if(class_exists($workerClass)){
             $this->addLog("starting...");

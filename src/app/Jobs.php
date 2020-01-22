@@ -182,36 +182,55 @@ class Jobs extends Queuer
     public function dispatchJob($job)
     {
         
-        $last_worker_id = 0;
-        //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
-        $logfile = __DIR__ . "/../../logs/job_" . $job['id'] . ".log";
 
-        //Execute php with the worker script
-        $job_worker_cmd = $this->config->phpCommand
+        try {
+    
 
-            . ' ' . $this->config->workerScript
-            //. ' -- -j' . $job['id']
+            $last_worker_id = 0;
+            //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -- -j' . $job['id'];
+            $logfile = __DIR__ . "/../../logs/job_" . $job['id'] . ".log";
 
-            //Add job id param
-            . ' -j' . $job['id']
+            //Execute php with the worker script
+            $job_worker_cmd = $this->config->phpCommand
 
-            //Write a log file for current file (for debugging purposes)
-            . ' > ' . $logfile;
+                . ' ' . $this->config->workerScript
+                //. ' -- -j' . $job['id']
 
-        //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'];
-        if ($this->config->async) {
-            \writelog("Starting Background Job " . $job['id']);
+                //Add job id param
+                . ' -j' . $job['id']
 
-            //Execute the script asynchronously without blocking the current process
-            $p = new BackgroundProcess($job_worker_cmd);
-            $p->start();
+                //Write a log file for current file (for debugging purposes)
+                . ' > ' . $logfile;
+
+                \writelog("command: " .  $job_worker_cmd);
+
+            //$job_worker_cmd = $this->config->phpCommand . ' ' . $this->config->workerScript . ' -j' . $job['id'];
+            if ($this->config->async) {
+                \writelog("Starting async background Job " . $job['id']);
+
+                //Execute the script asynchronously without blocking the current process
+                try {
+                    $p = new BackgroundProcess($job_worker_cmd);
+                    $p->start();
+                } catch (Exception $e) {
+                            \writelog("Error while ececuting background process");
+                            \writelog($e->getMessage());
+                }
+
+            } else {
+                //Execute the script synchronously.
+                \writelog("Executing Job synchronously");
+                $cmd_output = shell_exec($job_worker_cmd);
+
+            }
 
 
-        } else {
-            //Execute the script synchronously.
-            \writelog("Executing Job synchronously");
-            $cmd_output = shell_exec($job_worker_cmd);
 
+        } catch (Exception $e) {
+                \writelog("ERROR");
+                \writelog($e->getMessage());
+
+            
         }
 
     }
