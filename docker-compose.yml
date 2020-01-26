@@ -21,6 +21,8 @@ services:
       PHP_OPCACHE_INTERNED_STRINGS_BUFFER: 16
     stdin_open: true
     tty: true
+    depends_on:
+      - queue-database
     networks:
       - dbnet
 
@@ -33,5 +35,20 @@ services:
       PHP_OPCACHE_MEMORY_CONSUMPTION: 192
     stdin_open: true
     tty: true
+    depends_on:
+      - queue-database
+    networks:
+      - dbnet
+
+  queue-database:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: queue
+      MYSQL_DATABASE: queue
+    command: mysqld --sql-mode=NO_ENGINE_SUBSTITUTION
+    tmpfs:
+      - /var/lib/mysql:rw
+    volumes:
+      - ./assets/database/queueserver.sql:/docker-entrypoint-initdb.d/dump.sql:ro
     networks:
       - dbnet

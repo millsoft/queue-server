@@ -15,6 +15,9 @@ The Queue Server is a server that can work on long taking tasks in the backgroun
 - Edit `src/config.php` and specify your database there, also configure the settings if you wish.
 - Copy .htaccess_dist to .htaccess, you can extend the .htaccess if you wish. 
 
+#### Docker
+You can use `docker-compose up` to start the queue server. Before you do this, create the "dbnet" database by executing: `docker network create dbnet`.
+
 #### Usage
 ##### Starting the server
 Open your terminal and execute the following: `php server.php`.
@@ -122,7 +125,6 @@ The ExecWorker will execute a system command. For example you can call a bash sc
 Simply call `php work.php -j123` in your terminal. This is how the queue server calls each job. You can see the output directly in the console. Every output will also be logged in the queue database in the `output` column.
 
 
+
 ## Info
 Project by Michael Milawski
-
-

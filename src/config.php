@@ -17,10 +17,10 @@ class GlobalConfig {
     //See file assets/database/queueserver.sql for database dump.
 
 	public $db = [
-		"host" => "0.0.0.0",
+		"host" => "queue-database",
 		"dbname" => "queue",
 		"user" => "root",
-		"pass" => "",
+		"pass" => "queue",
 	];
 
 	//how many workers can work simultanously?

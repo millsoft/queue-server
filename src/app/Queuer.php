@@ -18,7 +18,18 @@ class Queuer {
 
 	private function init() {
 		$this->loadConfig();
-		$this->loadDatabase();
+
+		$maxRetries = 10;
+		$retries = 0;
+
+		while ( $this->loadDatabase() === false && $retries < $maxRetries ) {
+			\writelog("Unable to connect to database, retrying...");
+			flush();
+			sleep(2);
+			$retries++;
+		 };
+
+
 	}
 
 	private function loadDatabase() {
@@ -47,10 +58,10 @@ class Queuer {
 				],
 			]);
 
-		} catch (Exception $e) {
-			die("Error Connecting to database!\n" . $e->getMessage());
-		} catch (PDOException $e) {
-			die("Error Connecting to database!\n" . $e->getMessage());
+		} catch (\Exception $e) {
+			return false;
+		} catch (\PDOException $e) {
+			return false;
 		}
 
 		\writelog("Connected to the database: " . $this->config->db["dbname"]);
